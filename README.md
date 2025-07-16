@@ -1,2 +1,6 @@
 # CaZa-s-Library
-The software system will manage the system of a library, primarily its books, as well as the staff, members, and guest users. It will provide the users with access to the books’ titles, ISBNs,  author names, whether the book is currently being rented out, and whether it is overdue. The staff can edit the books listing accessible to the member and guest users. The member users can rent out books available in the library’s system and will receive an overdue notice via email address after the set period of time has passed to return the book to the library.
+The software system will manage the system of a library, primarily its books, as well as the staff, members, and guest users.
+
+It will provide the users with access to the books’ titles, ISBNs,  author names, whether the book is currently being rented out, and whether it is overdue. The staff can edit the books listing accessible to the member and guest users. The member users can rent out books available in the library’s system and will receive an overdue notice via reminder after the set period of time has passed to return the book to the library.
+
+Collaborators:
