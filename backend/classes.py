@@ -16,3 +16,15 @@ class Book:
 
   def setTitle(self, title):
     self.__title = title
+
+class Member:
+  def __init__(self, name, member_id, email):
+    self._name = name,
+
+class Staff:
+  def __init__(self, username, id):
+    self._username = username,
+
+# combined the Staff/Member manager class into Manager
+class Manager:
+  #TODO: define functions for member class
