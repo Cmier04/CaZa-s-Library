@@ -1,0 +1,14 @@
+[
+    {
+        "name": "John",
+        "staff_id": "1234"
+    },
+    {
+        "name": "Randall",
+        "staff_id": "5678"
+    },
+    {
+        "name": "Harriet",
+        "staff_id": "9600"
+    }
+]
