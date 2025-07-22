@@ -3,14 +3,14 @@
 # Project Name: CaZa's Library
 # File Purpose: Define and implement classes used in driver program
 
-"--------------------------List of TODO's-------------------------------"
+#--------------------------List of TODO's-------------------------------
   # TODO: complete definition of Member class and check if "user" class is necessary to handle guest interaction
   # TODO: complete definition of Staff class; make any changes necessary
   # TODO: define functions for member class
   # TODO: revise and edit docstrings to accurately describe classes
 
-"--------------------------Changes Made---------------------------------"
- ' Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
+#--------------------------Changes Made---------------------------------
+ # Comment changes made to this file here, keeps track of changes if commit contains multiple files.
   #..
 
 class Book:
@@ -81,6 +81,27 @@ class Staff:
   def __init__(self, username, id):
     self._username = username
     self._id = id
+  
+  def editListing(self):
+    pass
+    
+  def addBook(self, title, author, isbn, rent_status, overdue_status):
+    pass
+    
+  def removeBook(self):
+    pass
+    
+  def addMember(self):
+    pass
+    
+  def removeMember(self):
+    pass
+    
+  def search(self):
+    pass
+    
+  def editBookTitle(self):
+    pass
 
 # combined the Staff/Member manager class into Manager, rename if necessary
 class Manager:
@@ -88,6 +109,21 @@ class Manager:
   def __init__(self):
     pass
 
-  def sendOverdueNotice(self):
-    # Display overdue notice and which books are overdue to user
+  def _sendOverdueNotice(self, title, isbn):
+    # Display overdue notice and which books are overdue to user, display title and isbn of book(s)
+    pass
+  
+  def loginUser(self, name, id):
+    pass
+    
+  def _assignMemberId(self, name, email): # Return/display member id
+    pass
+
+  def _checkMemberId(self, member_id): # Return/display whether member id is valid (bool value)
+    pass
+    
+  def _checkStaffId(self, id): # Return/display whether staff id is valid (bool value)
+    pass
+    
+  def logOut(self):
     pass
