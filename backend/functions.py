@@ -4,7 +4,7 @@
 # File Purpose: Defines functions needed for program
 
 "--------------------------List of TODO's-------------------------------"
-    # TODO: ensure file information is correct
+    # TODO: ensure file information is correct and json files have information to read from
     # TODO: test
 # NOTE: might need to add more functions to verify login information (may also be defined within the manager class)
 
