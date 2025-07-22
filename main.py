@@ -8,10 +8,10 @@
   # if crash, redefine create_app to not use blueprints
 
 "--------------------------Changes Made---------------------------------"
- ' Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
+  # Comment changes made to this file here, keeps track of changes if commit contains multiple files.
   #..
 
-from backend import create_app
+from backend._init_ import create_app
 
 app = create_app
 
