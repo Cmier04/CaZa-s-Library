@@ -3,14 +3,14 @@
 # Project Name: CaZa's Library
 # File Purpose: Define and implement classes used in driver program
 
-"--------------------------List of TODO's-------------------------------"
+#--------------------------List of TODO's-------------------------------
   # TODO: complete definition of Member class and check if "user" class is necessary to handle guest interaction
   # TODO: complete definition of Staff class; make any changes necessary
   # TODO: define functions for member class
   # TODO: revise and edit docstrings to accurately describe classes
 
-"--------------------------Changes Made---------------------------------"
- ' Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
+#--------------------------Changes Made---------------------------------
+ # Comment changes made to this file here, keeps track of changes if commit contains multiple files.
   #..
 
 class Book:
@@ -34,6 +34,8 @@ class Member:
     self._name = name
     self._member_id = member_id
     self._email = email
+    self.favorites = []
+    self.rented = {} # Dictionary has book:rent_due_date key:value pairs
 
   def editAccount(self, name, email):
     self._name = name
@@ -47,12 +49,81 @@ class Member:
     # Displays info on all available books
     pass
 
+  def viewFavorites(self):
+    # Displays info on all favorited books
+    pass
+    
+  def rentBook(self):
+    # Changes rent status of book, assigns rent period to Member
+    # Limit of rented books at a time is 2 books
+    # Check how many rented books Member has, and if they have 2 books currently, reject their request
+    pass
+
+  def returnBook(self):
+    # Change status of book, delete book reference from attribute
+    pass
+
+  def addFavorite(self):
+    # Add book to favorites attribute
+    pass
+  
+  def removeFavorite(self):
+    # Remove book from favorites
+    pass
+  
+  def changeBookStatus(self):
+    # Check rented books and change their status accordingly
+    # call Manager's function sendOverdueNotice, if there are any overdue books
+    pass
+
 class Staff:
   'Attributes information to staff'
   def __init__(self, username, id):
     self._username = username
     self._id = id
+  
+  def editListing(self):
+    pass
+    
+  def addBook(self, title, author, isbn, rent_status, overdue_status):
+    pass
+    
+  def removeBook(self):
+    pass
+    
+  def addMember(self):
+    pass
+    
+  def removeMember(self):
+    pass
+    
+  def search(self):
+    pass
+    
+  def editBookTitle(self):
+    pass
 
 # combined the Staff/Member manager class into Manager, rename if necessary
 class Manager:
   'Manages all staff and member information while managing book returns and overdue notices'
+  def __init__(self):
+    pass
+
+  def _sendOverdueNotice(self, title, isbn):
+    # Display overdue notice and which books are overdue to user, display title and isbn of book(s)
+    pass
+  
+  def loginUser(self, name, id):
+    pass
+    
+  def _assignMemberId(self, name, email): # Return/display member id
+    pass
+
+  def _checkMemberId(self, member_id): # Return/display whether member id is valid (bool value)
+    pass
+    
+  def _checkStaffId(self, id): # Return/display whether staff id is valid (bool value)
+    pass
+    
+  def logOut(self):
+    pass
