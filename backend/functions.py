@@ -9,7 +9,7 @@
 # NOTE: might need to add more functions to verify login information (may also be defined within the manager class)
 
 "--------------------------Changes Made---------------------------------"
- ' Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
+  # Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
   #..
 
 import json

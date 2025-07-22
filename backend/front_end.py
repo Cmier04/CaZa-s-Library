@@ -11,16 +11,16 @@
   # TODO: test and ensure all routes lead to a defined page
 
 "--------------------------Changes Made---------------------------------"
- ' Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
-  # Added different page routes and specified todo's
+    # Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
+    # Added different page routes and specified todo's
 
 '------------------------NOTE-----------------------'
     # if the way this was implemented does not work, look into manually writing out the routes between pages
     # make sure to use render_template in order to load the HTML file 
 
 from flask import Blueprint, render_template, request, redirect, session
-from backend.functions import load_users, save_users
-from backend.classes import Manager
+from functions import load_users, save_users
+from classes import Manager
 
 bp = Blueprint('main', __name__)
 
@@ -35,7 +35,7 @@ def home():
 def signup():
     'implements the functionality of the member application page'
 
-@bp.route('/login'. methods=['GET', 'POST'])
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     'implements functions of the member/staff login page'
 
