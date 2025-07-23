@@ -13,6 +13,8 @@
  # Comment changes made to this file here, keeps track of changes if commit contains multiple files.
   #..
 
+from functions.py import *
+
 class Book:
   # Handles all book information and retrieves title, author, isbn from book.json
   def __init__(self, title, author, isbn, rent_status, overdue_status):
@@ -47,11 +49,12 @@ class Member:
 
   def viewListing(self):
     # Displays info on all available books
-    pass
+    books_load = load_books()
+    return books_load
 
   def _viewFavorites(self):
     # Displays info on all favorited books
-    pass
+    return self.favorites
     
   def rentBook(self):
     # Changes rent status of book, assigns rent period to Member
@@ -63,9 +66,10 @@ class Member:
     # Change status of book, delete book reference from attribute
     pass
 
-  def addFavorite(self):
+  def addFavorite(self, title, author, isbn, rent_status, overdue_status):
     # Add book to favorites attribute
-    pass
+    fav_book = Book(title, author, isbn, rent_status, overdue_status)
+    self.favorites.append(fav_book)
   
   def removeFavorite(self):
     # Remove book from favorites
@@ -84,22 +88,29 @@ class Staff:
   
   def _editListing(self):
     # Edit books listing
+    # books_listing = load_books()
     pass
     
   def _addBook(self, title, author, isbn, rent_status, overdue_status):
     # Add a Book to the books.json
+    # book1 = Book(title, author, isbn, rent_status, overdue_status)
+    # listing = load_books()
     pass
     
   def _removeBook(self, title, author, isbn):
     # Remove a Book from the books.json
+    # listing = load_books()
     pass
     
-  def _addMember(self):
+  def _addMember(self, name, member_id, email):
     # Add a member to "users" list in the dictionary found in users.json
+    # users_listing = load_users()
+    # member1 = Member(name, member_id, email)
     pass
     
   def _removeMember(self):
     # Remove a member from the "users" list in users.json
+    # users_listing = load_users()
     pass
     
   def search(self):
@@ -108,6 +119,7 @@ class Staff:
     
   def editBookTitle(self, title, isbn):
     # First, search for book via ISBN, and then edit title of the book
+    # books_listing = load_books()
     pass
 
 # combined the Staff/Member manager class into Manager, rename if necessary
@@ -127,12 +139,18 @@ class Manager:
   def _assignMemberId(self, name, email): # Return/display member id
     # Assign a member id listed from "unused_ids" in the users.json
     # then delete the currently being used id from the list
+    # users_listing = load_users()
     pass
 
   def _checkMemberId(self, member_id): # Return/display whether member id is valid (bool value)
+    # users_listing = load_users()
     pass
     
   def _checkStaffId(self, id): # Return/display whether staff id is valid (bool value)
+    #if not os.path.exists('staff.json'):
+        #return False
+    #with open ('staff.json', 'r') as f:
+        #staff_listing = json.load(f)
     pass
     
   def logOut(self):
