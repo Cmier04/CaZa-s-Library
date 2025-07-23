@@ -9,18 +9,20 @@
   # TODO: test and ensure all imports are defined
 
 "--------------------------Changes Made---------------------------------"
- ' Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
+  # Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
   #..
 
 "--------------------------NOTE-------------------------------"
-    # Blueprints are meant to help organize project, if they don't work then do this manually
+  # Blueprints are meant to help organize project, if they don't work then do this manually
 
+import os
+import sys
 from flask import Flask
-from front_end import bp as front_bp
+from backend.front_end import bp as front_bp
 
 def create_app():
     app = Flask(
-        _name_,
+        __name__,
         template_folder=os.path.abspath('..frontend/templates'), 
         static_folder=os.path.abspath('../frontend/static'),
     )
