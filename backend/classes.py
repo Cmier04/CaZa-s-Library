@@ -13,7 +13,7 @@
  # Comment changes made to this file here, keeps track of changes if commit contains multiple files.
   #..
 
-from functions.py import *
+from backend.functions import *
 
 class Book:
   # Handles all book information and retrieves title, author, isbn from book.json
@@ -125,7 +125,7 @@ class Staff:
 # combined the Staff/Member manager class into Manager, rename if necessary
 class Manager:
   # Manages all staff and member information while managing book returns and overdue notices
-  def __init__(self):
+  def __init__(self, user_data):
     pass
 
   def _sendOverdueNotice(self, title, isbn):
