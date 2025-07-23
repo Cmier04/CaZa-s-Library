@@ -43,9 +43,22 @@ class Member:
     self._name = name
     self._email = email
 
-  def search(self):
+  def search(self): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
     # Searches the book database via title, author, ISBN
-    pass
+    books_load = load_books() # Returns a list of dictionaries
+    list_of_books = []
+    for item in books_load:
+      if ((title != "") and (title == item["title"]) and (author == "") and (ISBN == "")):
+        list_of_books.append(item) # Dictionary containing info on book found
+      elif ((author != "") and (author == item["author"]) and (title == "") and (ISBN == "")):
+        list_of_books.append(item)
+      elif ((ISBN != "") and (ISBN == item["isbn"]) and (author == "") and (title == "")):
+        list_of_books.append(item)
+
+    if (len(list_of_books) == 0):
+      return "No books found."
+    else:
+      return list_of_books
 
   def viewListing(self):
     # Displays info on all available books
