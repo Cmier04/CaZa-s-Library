@@ -18,7 +18,7 @@
 import os
 import sys
 from flask import Flask
-from front_end import bp as front_bp
+from backend.front_end import bp as front_bp
 
 def create_app():
     app = Flask(

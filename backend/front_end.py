@@ -18,9 +18,11 @@
     # if the way this was implemented does not work, look into manually writing out the routes between pages
     # make sure to use render_template in order to load the HTML file 
 
+import sys
+import os
 from flask import Blueprint, render_template, request, redirect, session
-from functions import load_users, save_users
-from classes import Manager
+from backend.functions import load_users, save_users
+from backend.classes import Manager
 
 bp = Blueprint('main', __name__)
 
