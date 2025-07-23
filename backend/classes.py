@@ -29,7 +29,7 @@ class Book:
     self.__title = title
 
 class Member:
-  'Defines what attributes are associated with being a member'
+  # Defines what attributes are associated with being a member
   def __init__(self, name, member_id, email):
     self._name = name
     self._member_id = member_id
@@ -77,7 +77,7 @@ class Member:
     pass
 
 class Staff:
-  'Attributes information to staff'
+  # Attributes information to staff
   def __init__(self, username, id):
     self._username = username
     self._id = id
