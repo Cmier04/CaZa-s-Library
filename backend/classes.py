@@ -43,7 +43,7 @@ class Member:
     self._name = name
     self._email = email
 
-  def search(self): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
+  def search(self, title, author, ISBN): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
     # Searches the book database via title, author, ISBN
     books_load = load_books() # Returns a list of dictionaries
     list_of_books = []
@@ -107,29 +107,46 @@ class Staff:
     # books_listing = load_books()
     pass
     
-  def _addBook(self, title, author, isbn, rent_status, overdue_status):
+  def _addBook(self, title, author, isbn, genre, description):
     # Add a Book to the books.json
-    # book1 = Book(title, author, isbn, rent_status, overdue_status)
-    # listing = load_books()
-    pass
+    book1 = {"title":title, 
+             "author": author, 
+             "isbn": isbn, 
+             "rent_status": "open", 
+             "overdue_status": "on time",
+             "genre": genre,
+             "description": description}
+    listing = load_books()
+    listing.append(book1)
+    save_books(listing)
     
-  def _removeBook(self, title, author, isbn):
+  def _removeBook(self, title, author, isbn): # Returns a boolean that confirms whether the process succeeded or not
     # Remove a Book from the books.json
-    # listing = load_books()
-    pass
+    listing = load_books()
+    copy = listing
+    did_succeed = False
+    for item in copy:
+      if ((title != "") and (title == item["title"]) and (author == item["author"]) and (isbn == item["isbn"])):
+        listing.remove(item)
+        save_books(listing)
+        did_succeed = True
+    return did_succeed
     
   def _addMember(self, name, member_id, email):
     # Add a member to "users" list in the dictionary found in users.json
-    # users_listing = load_users()
-    # member1 = Member(name, member_id, email)
-    pass
+    users_listing = load_users() # Returns a dictionary with two keys
+    member1 = {"name": name, 
+               "member_id": member_id, 
+               "email": email}
+    users_listing["users"].append(member1)
+    save_users(users_listing)
     
   def _removeMember(self):
     # Remove a member from the "users" list in users.json
     # users_listing = load_users()
     pass
     
-  def search(self):
+  def search(self, title, author, ISBN):
     # Search for a book in the books.json via title, author, or ISBN
     books_load = load_books() # Returns a list of dictionaries
     list_of_books = []
@@ -157,6 +174,7 @@ class Staff:
         books_listing.remove(item)
         item["title"] = new_title
         books_listing.insert(index, item)
+        save_books(books_listing)
         is_true = True
       else:
         index += 1
