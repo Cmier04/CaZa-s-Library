@@ -69,11 +69,29 @@ class Member:
     # Displays info on all favorited books
     return self.favorites
     
-  def rentBook(self):
+  def rentBook(self, title, author, isbn, rent_status, overdue_status, date): # date is a tuple of (month, day, year)
     # Changes rent status of book, assigns rent period to Member
     # Limit of rented books at a time is 2 books
     # Check how many rented books Member has, and if they have 2 books currently, reject their request
-    pass
+    if (len(self.rented == 2)):
+      return "Rent book request rejected. Member is currently renting 2 books, which is the limit at one point in time."
+    elif (rent_status == "closed"):
+      return "Rent book request rejected. Book is currently being rented and unavailable to other Members."
+    else:
+      books_load = load_books()
+      copy_load = books_load
+      rent_status = "closed"
+      new_book = Book(title, author, isbn, rent_status, overdue_status)
+      self.rented[new_book] = ""
+      # TODO: calculate new_date for self.rented dictionary
+      index = 0
+      for item in copy_load:
+        if ((title == item["title"]) and (author == item["author"]) and (isbn == item["isbn"])):
+          books_load.at(index)["rent_status"] = "closed"
+        else:
+          index += 1
+      save_books(books_load)
+      return "Book has been successfully rented. Please return it in 14 days."
 
   def returnBook(self):
     # Change status of book, delete book reference from attribute
@@ -102,10 +120,17 @@ class Staff:
     self._username = username
     self._id = id
   
-  def _editListing(self):
+  def _editListing(self, new_title, author, isbn):
     # Edit books listing
-    # books_listing = load_books()
-    pass
+    books_listing = load_books()
+    copy_listing = books_listing
+    index = 0
+    for item in copy_listing:
+      if ((author == item["author"]) and (isbn == item["isbn"])):
+        books_listing.at(index)["title"] = new_title
+      else:
+        index += 1
+    save_books(books_listing)
     
   def _addBook(self, title, author, isbn, genre, description):
     # Add a Book to the books.json
@@ -141,10 +166,17 @@ class Staff:
     users_listing["users"].append(member1)
     save_users(users_listing)
     
-  def _removeMember(self):
+  def _removeMember(self, member_id): # Returns a boolean that confirms whether the process succeeded or not
     # Remove a member from the "users" list in users.json
-    # users_listing = load_users()
-    pass
+    users_listing = load_users()
+    copy = users_listing["users"] # Returns a list of dictionaries
+    did_succeed = False
+    for item in copy:
+      if (member_id == item["member_id"]):
+        users_listing["users"].remove(item)
+        save_users(users_listing)
+        did_succeed = True
+    return did_succeed
     
   def search(self, title, author, ISBN):
     # Search for a book in the books.json via title, author, or ISBN
@@ -191,8 +223,8 @@ class Manager:
     pass
 
   def _sendOverdueNotice(self, title, isbn):
-    # Display overdue notice and which books are overdue to user, display title and isbn of book(s)
-    pass
+    # Display overdue notice and which book is overdue to user, display title and isbn of book
+    return f"Notice to Member: The book titled {title} and with the ISBN: {isbn} is now overdue."
   
   def loginUser(self, role, name, id):
     # Login user based on name and id, as well as role
