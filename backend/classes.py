@@ -228,8 +228,29 @@ class Manager:
   
   def loginUser(self, role, name, id):
     # Login user based on name and id, as well as role
-    # users_listing = load_users()
-    pass
+    users_listing = load_users()
+    staff_listing = load_staff() # Returns list of dictionaries with "name" and "staff_id" keys
+    if ((role == "staff") and self._checkStaffId(id)):
+      is_true = False
+      for item in staff_listing:
+        if ((name == item["name"]) and id == item["staff_id"]):
+          is_true = True
+      if (is_true):
+        return "Staff Login succeeded."
+      else:
+        return "Login denied."
+    elif ((role == "member") and self._checkMemberId(id)):
+      users = users_listing["users"]
+      is_member = False
+      for item in users:
+        if ((name == item["name"]) and (id == item["member_id"])):
+          is_member = True
+      if (is_member):
+        return "Member Login succeeded."
+      else:
+        return "Login denied."
+    else:
+      return "Login denied."
     
   def _assignMemberId(self, name, email): # Return/display member id
     # Assign a member id listed from "unused_ids" in the users.json
@@ -238,12 +259,16 @@ class Manager:
     pass
 
   def _checkMemberId(self, member_id): # Return/display whether member id is valid (bool value)
-    # users_listing = load_users()
-    pass
+    users_listing = load_users()
+    users = users_listing["users"]
+    for item in users:
+      if (member_id == item["member_id"]):
+        return True
+    return False
     
   def _checkStaffId(self, id): # Return/display whether staff id is valid (bool value)
-    #if not os.path.exists('staff.json'):
-        #return False
-    #with open ('staff.json', 'r') as f:
-        #staff_listing = json.load(f)
-    pass
+    staff = load_staff()
+    for item in staff:
+      if (id == item["staff_id"]):
+        return True
+    return False
