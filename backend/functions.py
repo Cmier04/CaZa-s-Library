@@ -25,8 +25,8 @@ def load_users():
     with open(user_file, 'r') as f:
         return json.load(f)
 
-def save_users(users, user_data):
-    # saves the users to users.json
+def save_users(user_data):
+    # saves the user_data to users.json
     with open(user_file, 'w') as f:
         json.dump(user_data, f, indent=4)
 
