@@ -8,7 +8,19 @@
  TODO: come up with specialized layouts for member account page and staff account page (each will have different features present)
 */
 
-body {
+/* ============================ Reset and Base Styles ============================ */
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body.home {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f6eee3;
@@ -18,8 +30,45 @@ body {
     min-height: 100vh;
 }
 
-/* Navigation Bar */
+body.login {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+/* ============================ Typography ============================ */
+h1 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+p {
+    max-width: 800px;
+    line-height: 1.7;
+    font-size: 18px;
+}
+
+label {
+    display: block;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/*============================ Navigation Bar ============================ */
 .navbar {
+    margin: 0;
+    padding-top: 14px;
     background-color: #2c3e50;
     padding: 14px 20px;
     display: flex;
@@ -41,7 +90,7 @@ body {
     border-radius: 4px;
 }
 
-.navbar a.active {
+.navbar a.nav-button.active {
     background-color: #1abc9c;
     border-radius: 4px;
 }
@@ -61,7 +110,7 @@ body {
     opacity: 0.85;
 }
 
-/* Main Content */
+/*============================ Home Page ============================ */
 .container {
     flex-grow: 1;
     padding: 40px 20px;
@@ -69,6 +118,7 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    flex-grow: 1;
 }
 
 .library-image {
@@ -78,24 +128,6 @@ body {
     object-fit: cover;
     border-radius: 10px;
     margin-bottom: 30px;
-}
-
-h1 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-}
-
-p {
-    max-width: 800px;
-    line-height: 1.7;
-    font-size: 18px;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #2c3e50;
-    color: white;
 }
 
 .cta-button {
@@ -114,3 +146,147 @@ footer {
 .cta-button:hover {
     background-color: #159e85;
 }
+
+/*============================ Login Page ============================ */
+.login-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="text"],
+input[type="password"],
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.login-btn {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: orange;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.login-btn:hover {
+    background-color: rgb(236, 131, 2);
+}
+
+.clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #888;
+    cursor: pointer;
+    padding: 0;
+}
+
+.clear-btn:hover {
+    color: #333;
+}
+
+.login.cta-button {
+    margin-left: 20px;
+    display: inline-block;
+    margin-top: 25px;
+    padding: 12px 24px;
+    background-color: #1abc9c;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.login.cta-button:hover {
+    background-color: #159e85;
+}
+
+/*============================ Title ============================ */
+.library-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #1e7ee3;   
+    text-decoration: none;  
+    margin-bottom: 20px;
+    transition: color 0.3s;
+}
+
+.library-title span {
+    color: #1e7ee3;         
+    font-weight: normal;
+}
+
+.library-title:hover {
+    color: #1e7ee3;               
+}
+
+/*============================ Footer ============================ */
+
+footer,
+.footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 20px;
+    background-color: #2c3e50;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/*
+footer.home {
+    text-align: center;
+    padding: 20px;
+    background-color: #2c3e50;
+    color: white;
+}
+
+.footer {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+}
+*/

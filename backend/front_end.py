@@ -25,10 +25,10 @@ from flask import Blueprint, render_template, request, redirect, session
 from backend.functions import load_users, save_users
 from backend.classes import Manager
 
-bp = Blueprint('frontend', __name__, template_folder='../frontend/templates', static_folder='../frontend/static')
+bp = Blueprint('frontend', __name__, template_folder='../frontend/templates', static_folder='../frontend/static', static_url_path='/frontend_static')
 
 user_data = load_users()
-manager = Manager(user_data)
+#manager = Manager(user_data)
 
 #---------------------------------User Home Pages---------------------------------
 @bp.route('/')
@@ -53,16 +53,36 @@ def apply():
     'implements the functionality of the member application page'
     return render_template('member_application.html')
 
-@bp.route('/login')
+@bp.route('/login', methods=['GET', 'POST'])
 def login():
     'implements functions of the member/staff login page'
+    if request.method == 'POST':
+        username = request.form.get('username')
+        user_id = request.form.get('member')
+        role = request.form.get('role')
+
+        manager = Manager(user_data=None)
+
+        result = manager.loginUser(role, username, user_id)
+
+        if result == 'Member Login succeede.':
+            session['user_type'] = 'member'
+            session['username'] = username
+            return redirect(url_for('frontend.home_members'))
+        elif result == "Staff Login succeeded.":
+            session['user_type'] = 'staff'
+            session['username'] = username
+            return redirect(url_for('frontend.home_staff'))
+        else:
+            error: "Invalid name or ID. Please try again."
+            return render_template('login.html', error=error)
     return render_template('login.html')
 
 @bp.route('/logout')
 def logout():
     'logs out users and redirects them to the home page'
     session.clear()
-    return redirect(url_for('home'))
+    return redirect(url_for('frontend.home'))
 
 @bp.route('/forgot_id')
 def forgot_id():

@@ -5,13 +5,8 @@
     
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Library{% endblock %}</title>
+    <title>{% block title %}Library{% endblock %}</title> 
     <link rel="stylesheet" href="{{ url_for('frontend.static', filename='design.css') }}">
-    <style>
-        .navbar {
-        background: red !important;
-        }
-    </style>
 
 </head>
 <body>
@@ -42,9 +37,5 @@
     <div class="content">
         {% block content %}{% endblock %}
     </div>
-
-    <p>{{ url_for('frontend.static', filename='design.css') }}</p>
-
-
 </body>
 </html>
