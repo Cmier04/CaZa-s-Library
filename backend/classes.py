@@ -263,7 +263,7 @@ class Staff:
 # combined the Staff/Member manager class into Manager, rename if necessary
 class Manager:
   # Manages all staff and member information while managing book returns and overdue notices
-  def __init__(self, user_data):
+  def __init__(self):
     pass
 
   def _sendOverdueNotice(self, title, isbn):
