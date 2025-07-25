@@ -87,15 +87,28 @@ class Member:
       index = 0
       for item in copy_load:
         if ((title == item["title"]) and (author == item["author"]) and (isbn == item["isbn"])):
-          books_load.at(index)["rent_status"] = "closed"
+          books_load[index]["rent_status"] = "closed"
         else:
           index += 1
       save_books(books_load)
       return "Book has been successfully rented. Please return it in 14 days."
 
-  def returnBook(self):
+  def returnBook(self, title, author, isbn):
     # Change status of book, delete book reference from attribute
-    pass
+    books_load = load_books()
+    copy_load = books_load
+    rented_books = self.rented.keys() # Returns a list of keys/Book()'s
+    for book in rented_books:
+      if ((title == book.getTitle()) and (author == book.author) and (isbn == book.isbn)):
+        del self.rented[book]
+    index = 0
+    for item in copy_load:
+      if ((title == item["title"]) and (author == item["author"]) and (isbn == item["isbn"])):
+        books_load[index]["rent_status"] = "open"
+        books_load[index]["overdue_status"] = "on time"
+      else:
+        index += 1
+    save_books(books_load)
 
   def addFavorite(self, title, author, isbn, rent_status, overdue_status):
     # Add book to favorites attribute
@@ -127,7 +140,7 @@ class Staff:
     index = 0
     for item in copy_listing:
       if ((author == item["author"]) and (isbn == item["isbn"])):
-        books_listing.at(index)["title"] = new_title
+        books_listing[index]["title"] = new_title
       else:
         index += 1
     save_books(books_listing)
@@ -252,11 +265,19 @@ class Manager:
     else:
       return "Login denied."
     
-  def _assignMemberId(self, name, email): # Return/display member id
+  def _assignMemberId(self): # Return member id, if available, and return -1 when not available
     # Assign a member id listed from "unused_ids" in the users.json
     # then delete the currently being used id from the list
-    # users_listing = load_users()
-    pass
+    users_listing = load_users()
+    unused_list = users_listing["unused_ids"]
+    if (len(unused_list) > 0):
+      member_id = unused_list[0]
+      unused_list.remove(member_id)
+      users_listing["unused_ids"] = unused_list
+      save_users(users_listing)
+      return member_id
+    else:
+      return -1
 
   def _checkMemberId(self, member_id): # Return/display whether member id is valid (bool value)
     users_listing = load_users()
