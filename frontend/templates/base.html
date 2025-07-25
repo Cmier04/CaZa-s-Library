@@ -1,0 +1,44 @@
+<!-- File purpose: This file holds the navigation bar which displays at the top of every page -->
+
+<!DOCTYPE html>
+<html lang="en">
+    
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Library{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='design.css') }}">
+</head>
+<body>
+    <p style="background: red; color: white;">BASE TEMPLATE LOADED</p>
+
+    <!-- Navigation bar -->
+    <div class="navbar">
+        <a href="{{ url_for('home') }}" class="{% if request.endpoint == 'home' %}active{% endif %}">Home</a>
+        <a href="{{ url_for('about') }}">About Us</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+
+        {% if session.get('user_type') == 'member' %}
+            <a href="{{ url_for('member_profile') }}" class="nav-button">Profile</a>
+            <a href="{{ url_for('search') }}">Browse</a>
+            <a href="{{ url_for('favorites') }}">My Favorites</a>
+            <a href="{{ url_for('logout') }}" class="nav-button">Logout</a>
+
+        {% if session.get('user_type') == 'staff' %}
+            <a href="{{ url_for('staff_profile') }}" class="nav-button">Profile</a>
+            <a href="{{ url_for('search') }}">Browse</a>
+            <a href="{{ url_for('favorites') }}">My Favorites</a>
+            <a href="{{ url_for('logout') }}" class="nav-button">Logout</a>
+
+        {% else %}
+            <a href="{{url_for('apply') }}" class="nav-button">Member Application</a>
+            <a href="{{ url_for('login') }}" class="nav-button">Log In</a>
+        {% endif %}
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+
+</body>
+</html>
