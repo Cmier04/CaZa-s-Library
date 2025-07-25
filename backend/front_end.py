@@ -25,7 +25,7 @@ from flask import Blueprint, render_template, request, redirect, session
 from backend.functions import load_users, save_users
 from backend.classes import Manager
 
-bp = Blueprint('main', __name__)
+bp = Blueprint('frontend', __name__, template_folder='../frontend/templates', static_folder='../frontend/static')
 
 user_data = load_users()
 manager = Manager(user_data)
@@ -33,30 +33,38 @@ manager = Manager(user_data)
 #---------------------------------User Home Pages---------------------------------
 @bp.route('/')
 def home():
-    return render_template('home.html')
+   return render_template('home.html')
 
 @bp.route('/home_members')
 def home_members():
     'members home page which gets rid of log in and sign up feature, replacing them with logout'
-    return render_template('home_members.html')
+    session['user_type'] = 'member'
+    return render_template('home_members.html', user_type = 'member')
 
 @bp.route('/home_staff')
 def home_staff():
     'staff home page which gives them a summary of overdue books'
-    return render_template('home_staff.html')
+    session['user_type'] = 'staff'
+    return render_template('home_staff.html', user_type = 'staff')
 
 #---------------------------------User Log in and Sign up---------------------------------
-@bp.route('/member_application', methods=['GET', 'POST'])
-def member_application():
+@bp.route('/apply')
+def apply():
     'implements the functionality of the member application page'
     return render_template('member_application.html')
 
-@bp.route('/login', methods=['GET', 'POST'])
+@bp.route('/login')
 def login():
     'implements functions of the member/staff login page'
     return render_template('login.html')
 
-@bp.route('forgot_id')
+@bp.route('/logout')
+def logout():
+    'logs out users and redirects them to the home page'
+    session.clear()
+    return redirect(url_for('home'))
+
+@bp.route('/forgot_id')
 def forgot_id():
     'allows user to ask for their id by inputting their email/username in order to verify their identity'
     return render_template('forgot_id.html')
@@ -84,7 +92,7 @@ def listing_staff():
     return render_template('listing_staff.html')
 
 #---------------------------------Other Pages/UI---------------------------------
-@bp.route('/about_us')
+@bp.route('/about')
 def about_us():
     'displays library information'
     return render_template('about_us.html')
