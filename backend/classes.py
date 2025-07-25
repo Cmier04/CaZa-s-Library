@@ -129,11 +129,34 @@ class Member:
       if ((item.getTitle() == title) and (item.author == author) (item.isbn == isbn)):
         self.favorites.remove(item)
   
-  def changeBookStatus(self):
+  def changeBookStatus(self, title, author, isbn, current_date): # current_date is in this string format: "YYYY-MM-DD"
     # Check rented books and change their status accordingly
     # call Manager's function sendOverdueNotice, if there are any overdue books
     # Reference for date object and functions: https://www.dataquest.io/blog/python-datetime/
-    pass
+    date1 = date.isoformat(current_date)
+    rented_books = self.rented.keys()
+    rent_date = date1
+    for item in rented_books:
+      if ((title == item.getTitle()) and (author == item.author) and (isbn == item.isbn)):
+        rent_date = self.rented[item]
+    days_remaining = rent_date - date1
+    if (rent_date == date1):
+      return f"The book titled {title} and written by {author} is not overdue, but due today."
+    elif (days_remaining > timedelta(days=0)):
+      return f"The book titled {title} and written by {author} still has the following remaining days to be returned: {days_remaining}."
+    else:
+      manager1 = Manager()
+      notice = manager1._sendOverdueNotice(title, isbn)
+      books_load = load_books() # Returns list of dictionaries
+      copy = books_load
+      index = 0
+      for book in copy:
+        if ((title == book["title"]) and (author == book["author"]) and (isbn == book["isbn"])):
+          books_load[index]["overdue_status"] = "overdue"
+        else:
+          index += 1
+      save_books(books_load)
+      return notice
 
 class Staff:
   # Attributes information to staff
