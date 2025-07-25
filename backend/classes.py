@@ -15,6 +15,8 @@
 
 from backend.functions import *
 
+from datetime import date, timedelta
+
 class Book:
   # Handles all book information and retrieves title, author, isbn from book.json
   def __init__(self, title, author, isbn, rent_status, overdue_status):
@@ -69,7 +71,7 @@ class Member:
     # Displays info on all favorited books
     return self.favorites
     
-  def rentBook(self, title, author, isbn, rent_status, overdue_status, date): # date is a tuple of (month, day, year)
+  def rentBook(self, title, author, isbn, rent_status, overdue_status, date): # date is a string of "YYYY-MM-DD"
     # Changes rent status of book, assigns rent period to Member
     # Limit of rented books at a time is 2 books
     # Check how many rented books Member has, and if they have 2 books currently, reject their request
@@ -82,8 +84,13 @@ class Member:
       copy_load = books_load
       rent_status = "closed"
       new_book = Book(title, author, isbn, rent_status, overdue_status)
-      self.rented[new_book] = ""
-      # TODO: calculate new_date for self.rented dictionary
+
+      # Reference for finding the rent_date with first_date and date and timedelta objects: https://www.dataquest.io/blog/python-datetime/
+      first_date = date.fromisoformat(date)
+      time_period = 14
+      rent_date = first_date + timedelta(days=time_period)
+      self.rented[new_book] = rent_date
+      
       index = 0
       for item in copy_load:
         if ((title == item["title"]) and (author == item["author"]) and (isbn == item["isbn"])):
@@ -125,6 +132,7 @@ class Member:
   def changeBookStatus(self):
     # Check rented books and change their status accordingly
     # call Manager's function sendOverdueNotice, if there are any overdue books
+    # Reference for date object and functions: https://www.dataquest.io/blog/python-datetime/
     pass
 
 class Staff:
