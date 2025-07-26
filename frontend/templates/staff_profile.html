@@ -1,2 +1,151 @@
-<!--Staff Profile Page-->
-<!-- Requires: navigation bar, staff info, option to edit info, view/edit books listing, view/edit members, logout option -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staff Profile - CaZa’s Library</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f6eee3;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: #2c3e50;
+      padding: 14px 20px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      font-size: 17px;
+      padding: 10px 14px;
+      transition: background-color 0.3s;
+    }
+
+    .navbar a:hover,
+    .navbar a.active {
+      background-color: #1abc9c;
+      border-radius: 4px;
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .section h2 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 18px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      background-color: #159e85;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #2c3e50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <a href="home_staff.html">Home</a>
+    <a href="listing_staff.html">Manage Listings</a>
+    <a href="staff_profile.html" class="active">My Profile</a>
+    <a href="login.html">Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Staff Profile</h1>
+
+    <!-- Staff Info -->
+    <div class="section">
+      <h2>Staff Information</h2>
+      <p><strong>Name:</strong> Jane Smith</p>
+      <p><strong>Email:</strong> janesmith@caza.edu</p>
+      <p><strong>Staff ID:</strong> S00123</p>
+    </div>
+
+    <!-- Edit Info -->
+    <div class="section">
+      <h2>Edit Your Info</h2>
+      <form>
+        <label for="edit-name">Full Name</label>
+        <input type="text" id="edit-name" placeholder="Enter new name" />
+
+        <label for="edit-email">Email</label>
+        <input type="email" id="edit-email" placeholder="Enter new email" />
+
+        <button type="submit">Update Info</button>
+      </form>
+    </div>
+
+    <!-- Manage Members -->
+    <div class="section">
+      <h2>View / Edit Members</h2>
+      <p>No members currently registered.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    &copy; 2025 CaZa’s Library. All rights reserved.
+  </footer>
+
+</body>
+</html>
