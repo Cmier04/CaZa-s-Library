@@ -3,6 +3,8 @@
         "title": "Behind the Beautiful Forevers",
         "author": "Katherine Boo",
         "isbn": "9780812979329",
+        "rent_status": "open",
+        "overdue_status": "on time",
         "genre": "Biography",
         "description": "Author Katherine Boo describes her observations when she visited Mumbai, India. The book follows the lives of residents of Annawadi, a slum near Mumbai airport, and gives outsiders a look into poverty, inequality, and resiliance in modern India."
     },
@@ -10,6 +12,8 @@
         "title": "Animal Farm",
         "author": "George Orwell",
         "isbn": "9780451526342",
+        "rent_status": "open",
+        "overdue_status": "on time",
         "genre": "Dystopian",
         "description": "A critique of the Russian Revolution and Stalinist era; this book follows a group of farm animals that rebel against their human farmer with the hope to create a new society of equality and properity."
     },
@@ -17,6 +21,8 @@
         "title": "Atomic Habits: An Easy & Proven Way to Build Good Habits & Break Bad Ones",
         "author": "James Clear",
         "isbn": "9780735211292",
+        "rent_status": "open",
+        "overdue_status": "on time",
         "genre": "Self-Help",
         "description": "A self-help book which aims to provide a framework for building good habits and breaking bad ones. It emphasizes the power of small changes 'atomic habits' that compound overtime to create bigger and more profound change within oneself."
     },
@@ -24,6 +30,8 @@
         "title": "Dune",
         "author": "Frank Herbert",
         "isbn": "9780441013593",
+        "rent_status": "open",
+        "overdue_status": "on time",
         "genre": "science-fiction",
         "description": "On the planet of Arrakis, young heir Paul Atreides must learn to navigate the political landscape in order to keep his family in power through ruling the spice melange trade."
     },
@@ -31,6 +39,8 @@
         "title": "The Diary of a Young Girl",
         "author": "Anne Frank",
         "isbn": "9780553296983",
+        "rent_status": "open",
+        "overdue_status": "on time",
         "genre": "biography",
         "description": "This is the diary of Anne Frank, a young Jewish girl, who detailed in her diary her experience in hiding for two years with her family during Nazi occupation of the Netherlands."
     }

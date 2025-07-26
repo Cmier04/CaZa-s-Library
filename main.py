@@ -13,7 +13,7 @@
 
 import os
 import sys
-from backend.__init__ import create_app
+from backend import create_app
 
 app = create_app()
 
