@@ -11,9 +11,10 @@
 </head>
 <body>
 
+    {% if not hide_nav %}
     <!-- Navigation bar -->
     <div class="navbar">
-        <a href="{{ url_for('frontend.home') }}" class="{% if request.endpoint == 'frontend.home' %}active{% else %}nav-link{% endif %}">Home</a>
+        <a href="{{ url_for('frontend.home') }}" class="nav-button {% if request.endpoint == 'frontend.home' %}active{% else %}nav-link{% endif %}">Home</a>
         <a href="{{ url_for('frontend.about_us') }}">About Us</a>
 
         {% if session.get('user_type') == 'member' %}
@@ -33,6 +34,7 @@
             <a href="{{ url_for('frontend.login') }}" class="nav-button">Log In</a>
         {% endif %}
     </div>
+    {% endif %}
 
     <div class="content">
         {% block content %}{% endblock %}

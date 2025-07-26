@@ -15,9 +15,7 @@
         selection of books, journals, and digital resources, we’re here to support your journey of learning and
         growth.
         Whether you're researching, reading, or relaxing, our doors are open to you.</p>
-    {% if session.get('user_type') == 'guest' %}
-        <a href="{{ url_for('apply') }}" class="cta-button">Join CaZa’s Library</a>
-    {% endif %}
+    <a href="{{ url_for('frontend.apply') }}" class="cta-button">Join CaZa’s Library</a>
 </div>
 
 <!-- Footer -->
