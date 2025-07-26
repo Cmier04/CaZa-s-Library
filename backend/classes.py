@@ -89,7 +89,7 @@ class Member:
       first_date = date.fromisoformat(date)
       time_period = 14
       rent_date = first_date + timedelta(days=time_period)
-      self.rented[new_book] = rent_date
+      self.rented[isbn] = rent_date.isoformat()
       
       index = 0
       for item in copy_load:
@@ -240,9 +240,18 @@ class Staff:
 # combined the Staff/Member manager class into Manager, rename if necessary
 class Manager:
   # Manages all staff and member information while managing book returns and overdue notices
-  def __init__(self, user_data):
+  def __init__(self):
     pass
 
+  def getOverdueBooks(self, member): # Checks the overdue status of books and adds them to dict
+    overdue = []
+    today = datetime.today().date()
+    for book, due_date_str in member.rented.items():
+      due_date = datetime.strptime(due_date_str, "%Y-%m-%d").date()
+      if due_date < today:
+        overdue.append(book)
+    return overdue
+    
   def _sendOverdueNotice(self, title, isbn):
     # Display overdue notice and which book is overdue to user, display title and isbn of book
     return f"Notice to Member: The book titled {title} and with the ISBN: {isbn} is now overdue."
@@ -272,6 +281,26 @@ class Manager:
         return "Login denied."
     else:
       return "Login denied."
+
+      
+   def add_new_member(self, name, email): # Add a new member to user.json file
+      users_listing = load_users()
+      member_id = self._assignMemberId(users_listing)
+      if not member_id == -1:
+        return "Failed to add new member: Library is at capacity."
+      for user in users_listing["users"]:
+        if user["name"] == name and user["email"] == email:
+          return "Failed to add new member: User already exists."
+      new_member = {
+        "name": name,
+        "member_id": member_id,
+        "email": email,
+        "favorites": [],
+        "rented": {}
+      }
+      users_listing["users"].append(new_member)
+      save_users(users_listing)
+      return f"New member added successfully. Member ID: {member_id}"
     
   def _assignMemberId(self): # Return member id, if available, and return -1 when not available
     # Assign a member id listed from "unused_ids" in the users.json
