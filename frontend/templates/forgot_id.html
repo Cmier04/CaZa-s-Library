@@ -1,2 +1,35 @@
-<!--Forgot MemberId Page-->
-<!--Requires: Email for confirmation-->
+{% extends 'base.html' %}
+{% set hide_nav = True %}
+{% block title %}Forgot Member ID - CaZa's Library{% endblock %}
+
+{% block content %}
+<div class="forgot-container">
+  <h2>Forgot Your Member ID?</h2>
+  <p>Please enter your email address. We'll confirm if your account exists and email your Member ID.</p>
+
+  <form id="forgotIdForm">
+    <label for="email">Email Address</label>
+    <input type="email" id="email" name="email" required />
+
+    <button type="submit">Send Member ID</button>
+  </form>
+
+  <div class="confirmation" id="confirmationMessage" style="display: none;">
+    If the email matches our records, your Member ID has been sent!
+  </div>
+
+  <a href="{{ url_for('frontend.login') }}">Back to Login</a>
+</div>
+
+<script>
+  const form = document.getElementById('forgotIdForm');
+  const confirmation = document.getElementById('confirmationMessage');
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    confirmation.style.display = 'block';
+    form.reset();
+  });
+</script>
+{% endblock %}
+

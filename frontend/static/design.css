@@ -11,306 +11,253 @@
 /* ============================ Reset and Base Styles ============================ */
 
 html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: inherit;
 }
 
-body.home {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f6eee3;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-body.login {
-    font-family: Arial, sans-serif;
-    background: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f6eee3;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 /* ============================ Typography ============================ */
+
 h1 {
-    color: #2c3e50;
-    margin-bottom: 20px;
+  color: #2c3e50;
+  margin-bottom: 20px;
 }
 
 h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
 p {
-    max-width: 800px;
-    line-height: 1.7;
-    font-size: 18px;
+  max-width: 800px;
+  line-height: 1.7;
+  font-size: 18px;
 }
 
 label {
-    display: block;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+  display: block;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
 }
 
-/*============================ Navigation Bar ============================ */
+/* ============================ Navigation Bar ============================ */
+
 .navbar {
-    padding-top: 14px;
-    background-color: #2c3e50;
-    padding: 14px 20px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
+  background-color: #2c3e50;
+  padding: 14px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
 .navbar a {
-    color: white;
-    text-decoration: none;
-    padding: 12px;
-    font-size: 17px;
-    transition: background-color 0.3s ease;
+  color: white;
+  text-decoration: none;
+  padding: 12px;
+  font-size: 17px;
+  transition: background-color 0.3s ease;
 }
 
-.navbar a:hover {
-    background-color: #1abc9c;
-    border-radius: 4px;
-}
-
-.navbar a.nav-button.active {
-    background-color: #1abc9c;
-    border-radius: 4px;
+.navbar a:hover,
+.navbar a.active {
+  background-color: #1abc9c;
+  border-radius: 4px;
 }
 
 .navbar a.nav-button {
-    background-color: #1abc9c;
-    border-radius: 4px;
-    padding: 8px 14px;
-    font-weight: bold;
+  background-color: #1abc9c;
+  border-radius: 4px;
+  padding: 8px 14px;
+  font-weight: bold;
 }
 
 .navbar a.nav-button:last-of-type {
-    background-color: #3498db;
+  background-color: #3498db;
 }
 
 .navbar a.nav-button:hover {
-    opacity: 0.85;
+  opacity: 0.85;
 }
 
-/*============================ Home Page ============================ */
+/* ============================ Containers and Layout ============================ */
+
 .container {
-    flex-grow: 1;
-    padding: 40px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+  flex-grow: 1;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .library-image {
-    width: 100%;
-    max-width: 1000px;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 10px;
-    margin-bottom: 30px;
+  width: 100%;
+  max-width: 1000px;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 30px;
 }
 
-.cta-button {
-    display: inline-block;
-    margin-top: 25px;
-    padding: 12px 24px;
-    background-color: #1abc9c;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 6px;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
+/* ============================ Buttons ============================ */
 
-.cta-button:hover {
-    background-color: #159e85;
-}
-
-/*============================ Login Page ============================ */
-.login-container {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    width: 100%;
-    max-width: 400px;
-    margin: auto;
-}
-
-.input-wrapper {
-    position: relative;
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.input-wrapper input {
-    width: 100%;
-    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-input[type="text"],
-input[type="password"],
-select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-}
-
+.cta-button,
+button,
 .login-btn {
-    margin-top: 1.5rem;
-    width: 100%;
-    padding: 0.75rem;
-    background-color: orange;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
+  padding: 12px 24px;
+  background-color: #1abc9c;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
+.cta-button:hover,
+button:hover,
 .login-btn:hover {
-    background-color: rgb(236, 131, 2);
-}
-
-.clear-btn {
-    position: absolute;
-    right: .5px;
-    top: 55%;
-    margin: 10px;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    color: #888;
-    cursor: pointer;
-    padding: 0;
-}
-
-.clear-btn:hover {
-    color: #333;
+  background-color: #159e85;
 }
 
 button[type="submit"] {
-    width: 100%;
-    padding: 10px;
-    background-color: #3498db;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+  background-color: #3498db;
+  width: 100%;
 }
 
 button[type="submit"]:hover {
-    background-color: #1e699b;
+  background-color: #1e699b;
 }
 
 .cta-button.guest-button {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 6px;
-    background-color: #3498db;
-    color: white;
-    text-decoration: none;
-    transition: background-color 0.3 ease;
+  margin-top: 15px;
+  background-color: #3498db;
 }
 
 .cta-button.guest-button:hover {
-    background-color: rgb(130, 202, 226);
+  background-color: rgb(130, 202, 226);
 }
 
 .cta-button.small-button {
-    padding: 8px 16px;
-    font-size: 14px;
+  padding: 8px 16px;
+  font-size: 14px;
 }
 
-/*============================ Title ============================ */
+/* ============================ Input Fields ============================ */
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.input-wrapper input {
+  padding-right: 2.5rem;
+}
+
+.clear-btn {
+  position: absolute;
+  right: .5px;
+  top: 55%;
+  margin: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+}
+
+.clear-btn:hover {
+  color: #333;
+}
+
+/* ============================ Login Container ============================ */
+
+.login-container {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+}
+
+/* ============================ Titles ============================ */
+
 .library-title {
-    display: block;
-    font-size: 36px;
-    font-weight: bold;
-    color: #1e7ee3;   
-    text-decoration: none;  
-    margin-bottom: 20px;
-    transition: color 0.3s;
-    text-align: center;
-}
-
-.library-title-login {
-    display: block;
-    font-size: 36px;
-    font-weight: bold;
-    color: #1e7ee3;   
-    text-decoration: none;  
-    margin-bottom: 1.5rem;
-    transition: color 0.3s;
-    text-align: center;
+  display: block;
+  font-size: 36px;
+  font-weight: bold;
+  color: #1e7ee3;
+  text-decoration: none;
+  margin-bottom: 20px;
+  transition: color 0.3s;
+  text-align: center;
 }
 
 .library-title span {
-    color: #1e7ee3;         
-    font-weight: normal;
+  color: #1e7ee3;
+  font-weight: normal;
 }
 
 .library-title:hover {
-    color: #1e7ee3;               
+  color: #1e7ee3;
 }
 
-/*============================ Footer ============================ */
+/* ============================ Footer ============================ */
 
 footer,
 .footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #2c3e50;
-    color: white;
+  text-align: center;
+  padding: 20px;
+  background-color: #2c3e50;
+  color: white;
 }
 
-.footer a {
-    color: #007bff;
-    text-decoration: none;
+.footer a,
+.login-footer a {
+  color: #007bff;
+  text-decoration: none;
 }
 
-.footer a:hover {
-    text-decoration: underline;
+.footer a:hover,
+.login-footer a:hover {
+  text-decoration: underline;
 }
 
 .login-footer {
-    margin-top: 2rem;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #555;
-}
-.login-footer a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.login-footer a:hover {
-    text-decoration: underline;
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
 }
