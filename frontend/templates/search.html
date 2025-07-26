@@ -1,2 +1,162 @@
-<!--Search Page-->
-<!-- Requires: navigation bar, search bar, genres available, books listing link, option to checkout -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Search - CaZa's Library</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f6eee3;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: #2c3e50;
+      padding: 14px 20px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px;
+      font-size: 17px;
+      transition: background-color 0.3s;
+    }
+
+    .navbar a:hover {
+      background-color: #1abc9c;
+      border-radius: 4px;
+    }
+
+    .navbar a.active {
+      background-color: #1abc9c;
+      border-radius: 4px;
+    }
+
+    .container {
+      flex-grow: 1;
+      padding: 30px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+    }
+
+    .search-bar {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .search-bar input[type="text"] {
+      padding: 10px;
+      width: 60%;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px 0 0 6px;
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 10px 16px;
+      background-color: #1abc9c;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 0 6px 6px 0;
+      cursor: pointer;
+    }
+
+    .genres {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .genres button {
+      margin: 6px;
+      padding: 10px 16px;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .genres button:hover {
+      background-color: #2980b9;
+    }
+
+    .book-list {
+      margin-top: 30px;
+    }
+
+    .book {
+      background: white;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .book h3 {
+      margin: 0 0 10px;
+      color: #2c3e50;
+    }
+
+    .book p {
+      margin: 4px 0;
+    }
+
+    .checkout-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .checkout-btn:hover {
+      background-color: #159e85;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #2c3e50;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <a href="home_members.html">Home</a>
+    <a href="search.html" class="active">Search</a>
+    <a href="listing_member.html">Book Listings</a>
+    <a href="favorites.html">My Favorites</a>
+    <a href="member_profile.html">My Profile</a>
+    <a href="login.html">Logout</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+    <h1>Search the Catalog</h1>
+
+    <div class="search-bar">
+      <input type="text" placeholder="
+
