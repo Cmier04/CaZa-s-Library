@@ -264,7 +264,8 @@ class Staff:
 class Manager:
   # Manages all staff and member information while managing book returns and overdue notices
   def __init__(self, user_data):
-    self.users_listing = user_data
+    if (user_data == None):
+      self.users_listing = load_users()
 
   def _sendOverdueNotice(self, title, isbn):
     # Display overdue notice and which book is overdue to user, display title and isbn of book
