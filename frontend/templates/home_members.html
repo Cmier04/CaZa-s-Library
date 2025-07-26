@@ -15,6 +15,13 @@
             place.</p>
     </div>
 
+    <!-- Member ID popup -->
+    {% if session.get('member_id_popup') %}
+     <script>
+            alert("Welcome! Your Member ID is: {{ session['member_id_popup'] }}");
+     </script>
+    {% endif %}
+
     <!-- Footer -->
     <footer>
         &copy; 2025 CaZa’s Library. All rights reserved.

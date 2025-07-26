@@ -5,7 +5,7 @@
 {% block content %}
 <div class="application-container">
   <h2>Apply for CaZa’s Library Membership</h2>
-  <form id="applicationForm">
+  <form method="POST" action="{{ url_for('frontend.apply') }}">
     <label for="name">Full Name</label>
     <input type="text" id="name" name="name" required />
 
@@ -14,34 +14,6 @@
 
     <button type="submit">Generate Member ID</button>
   </form>
-
-  <div class="member-id" id="memberIdDisplay"></div>
-
-  <div class="login-link" id="loginLink">
-    <p>Your account has been created! <a href="{{ url_for('frontend.login') }}">Log in here</a></p>
-  </div>
 </div>
-
-<script>
-  const form = document.getElementById('applicationForm');
-  const memberIdDisplay = document.getElementById('memberIdDisplay');
-  const loginLink = document.getElementById('loginLink');
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const name = document.getElementById('name').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const memberId = 'M' + Math.floor(100000 + Math.random() * 900000);
-
-    const members = JSON.parse(localStorage.getItem('caza_members')) || [];
-    members.push({ name, email, memberId });
-    localStorage.setItem('caza_members', JSON.stringify(members));
-
-    memberIdDisplay.textContent = `Your Member ID: ${memberId}`;
-    loginLink.style.display = 'block';
-    form.reset();
-  });
-</script>
 {% endblock %}
 
