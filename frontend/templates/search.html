@@ -1,2 +1,29 @@
-<!--Search Page-->
-<!-- Requires: navigation bar, search bar, genres available, books listing link, option to checkout -->
+{% extends 'base.html' %}
+{% block title %}Search - CaZa's Library{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1>Search the Catalog</h1>
+
+  <div class="search-bar">
+    <input type="text" placeholder="Enter title, author, or keyword">
+    <button>Search</button>
+  </div>
+
+  <div class="genres">
+    <button>Fiction</button>
+    <button>Non-Fiction</button>
+    <button>Science</button>
+    <button>History</button>
+    <button>Biography</button>
+  </div>
+
+  <div class="book-list">
+    <div class="book">
+      <h3>Clean Code</h3>
+      <p><strong>Author:</strong> Robert C. Martin</p>
+      <p><strong>ISBN:</strong> 978-0132350884</p>
+      <p><strong>Status:</strong> Available</p>
+      <button c
+
+
