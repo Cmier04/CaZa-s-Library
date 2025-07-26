@@ -4,6 +4,8 @@
 {% block content %}
 <div class="booklist-container">
   <h1>Available Books</h1>
+
+  {# Later this can be replaced with: {% if books %} #}
   <table class="book-table">
     <thead>
       <tr>
@@ -15,25 +17,12 @@
     </thead>
     <tbody>
       <tr>
-        <td>Clean Code</td>
-        <td>Robert C. Martin</td>
-        <td>978-0132350884</td>
-        <td>Available</td>
-      </tr>
-      <tr>
-        <td>Atomic Habits</td>
-        <td>James Clear</td>
-        <td>978-0735211292</td>
-        <td>Checked Out</td>
-      </tr>
-      <tr>
-        <td>Design Patterns</td>
-        <td>Erich Gamma</td>
-        <td>978-0201633610</td>
-        <td>Available</td>
+        <td colspan="4" class="no-books">No books listed yet. Please check back later!</td>
       </tr>
     </tbody>
   </table>
+  {# {% else %} <p class="no-books">No books available.</p> {% endif %} #}
 </div>
 {% endblock %}
+
 
