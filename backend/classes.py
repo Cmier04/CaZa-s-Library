@@ -129,11 +129,34 @@ class Member:
       if ((item.getTitle() == title) and (item.author == author) (item.isbn == isbn)):
         self.favorites.remove(item)
   
-  def changeBookStatus(self):
+  def changeBookStatus(self, title, author, isbn, current_date): # current_date is in this string format: "YYYY-MM-DD"
     # Check rented books and change their status accordingly
     # call Manager's function sendOverdueNotice, if there are any overdue books
     # Reference for date object and functions: https://www.dataquest.io/blog/python-datetime/
-    pass
+    date1 = date.isoformat(current_date)
+    rented_books = self.rented.keys()
+    rent_date = date1
+    for item in rented_books:
+      if ((title == item.getTitle()) and (author == item.author) and (isbn == item.isbn)):
+        rent_date = self.rented[item]
+    days_remaining = rent_date - date1
+    if (rent_date == date1):
+      return f"The book titled {title} and written by {author} is not overdue, but due today."
+    elif (days_remaining > timedelta(days=0)):
+      return f"The book titled {title} and written by {author} still has the following remaining days to be returned: {days_remaining}."
+    else:
+      manager1 = Manager(load_users())
+      notice = manager1._sendOverdueNotice(title, isbn)
+      books_load = load_books() # Returns list of dictionaries
+      copy = books_load
+      index = 0
+      for book in copy:
+        if ((title == book["title"]) and (author == book["author"]) and (isbn == book["isbn"])):
+          books_load[index]["overdue_status"] = "overdue"
+        else:
+          index += 1
+      save_books(books_load)
+      return notice
 
 class Staff:
   # Attributes information to staff
@@ -241,7 +264,8 @@ class Staff:
 class Manager:
   # Manages all staff and member information while managing book returns and overdue notices
   def __init__(self, user_data):
-    pass
+    if (user_data == None):
+      self.users_listing = load_users()
 
   def _sendOverdueNotice(self, title, isbn):
     # Display overdue notice and which book is overdue to user, display title and isbn of book
@@ -249,7 +273,6 @@ class Manager:
   
   def loginUser(self, role, name, id):
     # Login user based on name and id, as well as role
-    users_listing = load_users()
     staff_listing = load_staff() # Returns list of dictionaries with "name" and "staff_id" keys
     if ((role == "staff") and self._checkStaffId(id)):
       is_true = False
@@ -261,7 +284,7 @@ class Manager:
       else:
         return "Login denied."
     elif ((role == "member") and self._checkMemberId(id)):
-      users = users_listing["users"]
+      users = self.users_listing["users"]
       is_member = False
       for item in users:
         if ((name == item["name"]) and (id == item["member_id"])):
@@ -276,20 +299,18 @@ class Manager:
   def _assignMemberId(self): # Return member id, if available, and return -1 when not available
     # Assign a member id listed from "unused_ids" in the users.json
     # then delete the currently being used id from the list
-    users_listing = load_users()
-    unused_list = users_listing["unused_ids"]
+    unused_list = self.users_listing["unused_ids"]
     if (len(unused_list) > 0):
       member_id = unused_list[0]
       unused_list.remove(member_id)
-      users_listing["unused_ids"] = unused_list
-      save_users(users_listing)
+      self.users_listing["unused_ids"] = unused_list
+      save_users(self.users_listing)
       return member_id
     else:
       return -1
 
   def _checkMemberId(self, member_id): # Return/display whether member id is valid (bool value)
-    users_listing = load_users()
-    users = users_listing["users"]
+    users = self.users_listing["users"]
     for item in users:
       if (member_id == item["member_id"]):
         return True

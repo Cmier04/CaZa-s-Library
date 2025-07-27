@@ -65,7 +65,7 @@ def login():
 
         result = manager.loginUser(role, username, user_id)
 
-        if result == 'Member Login succeede.':
+        if result == 'Member Login succeeded.':
             session['user_type'] = 'member'
             session['username'] = username
             return redirect(url_for('frontend.home_members'))
