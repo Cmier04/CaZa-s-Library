@@ -19,10 +19,11 @@ import os
 import sys
 from flask import Flask
 from backend.front_end import bp as frontend_bp
+import secrets
 
 def create_app():
     app = Flask(__name__, static_folder='frontend/static')
-    app.secret_key = ''
+    app.secret_key = secrets.token_hex(32)
 
     app.register_blueprint(frontend_bp)
     

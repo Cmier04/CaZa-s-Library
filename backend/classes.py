@@ -240,8 +240,9 @@ class Staff:
 # combined the Staff/Member manager class into Manager, rename if necessary
 class Manager:
   # Manages all staff and member information while managing book returns and overdue notices
-  def __init__(self):
-    pass
+  def __init__(self, user_data):
+    if (user_data == None):
+      self.users_listing = load_users()
 
   def getOverdueBooks(self, member): # Checks the overdue status of books and adds them to dict
     overdue = []
@@ -283,24 +284,24 @@ class Manager:
       return "Login denied."
 
       
-   def add_new_member(self, name, email): # Add a new member to user.json file
-      users_listing = load_users()
-      member_id = self._assignMemberId(users_listing)
-      if not member_id == -1:
-        return "Failed to add new member: Library is at capacity."
-      for user in users_listing["users"]:
-        if user["name"] == name and user["email"] == email:
-          return "Failed to add new member: User already exists."
-      new_member = {
-        "name": name,
-        "member_id": member_id,
-        "email": email,
-        "favorites": [],
-        "rented": {}
-      }
-      users_listing["users"].append(new_member)
-      save_users(users_listing)
-      return f"New member added successfully. Member ID: {member_id}"
+  def add_new_member(self, name, email): # Add a new member to user.json file
+    users_listing = load_users()
+    member_id = self._assignMemberId()
+    if member_id == -1:
+      return "Failed to add new member: Library is at capacity."
+    for user in users_listing["users"]:
+      if user["name"] == name and user["email"] == email:
+        return "Failed to add new member: User already exists."
+    new_member = {
+      "name": name,
+      "member_id": member_id,
+      "email": email,
+      "favorites": [],
+      "rented": {}
+    }
+    users_listing["users"].append(new_member)
+    save_users(users_listing)
+    return f"New member added successfully. Member ID: {member_id}"
     
   def _assignMemberId(self): # Return member id, if available, and return -1 when not available
     # Assign a member id listed from "unused_ids" in the users.json

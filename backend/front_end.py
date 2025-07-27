@@ -21,14 +21,14 @@
 
 import sys
 import os
-from flask import Blueprint, render_template, request, redirect, session
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for
 from backend.functions import load_users, save_users
 from backend.classes import Manager
 
 bp = Blueprint('frontend', __name__, template_folder='../frontend/templates', static_folder='../frontend/static', static_url_path='/frontend_static')
 
 user_data = load_users()
-#manager = Manager(user_data)
+manager = Manager(user_data)
 
 #---------------------------------User Home Pages---------------------------------
 @bp.route('/')
