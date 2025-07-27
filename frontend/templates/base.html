@@ -12,7 +12,14 @@
     {% if not hide_nav %}
     <!-- Navigation bar -->
     <div class="navbar">
-        <a href="{{ url_for('frontend.home') }}" class="{% if request.endpoint == 'frontend.home' %}active{% else %}nav-button{% endif %}">Home</a>
+        <a href="{%
+            if session.get('user_type') == 'member' %}{{ url_for('frontend.home_members') }}{%
+            elif session.get('user_type') == 'staff' %}{{url_for('frontend.home_staff') }}{%
+            else %}{{ url_for('frontend.home') }}{%
+            endif %}"
+            class="{% if request.endpoint == 'frontend.home' %}active{% else %}nav-button{% endif %}">
+            Home
+        </a>
         <a href="{{ url_for('frontend.about_us') }}" class="{% if request.endpoint == 'frontend.about_us' %}active{% else %}nav-button{% endif %}">About Us</a>
 
         {% if session.get('user_type') == 'member' %}
