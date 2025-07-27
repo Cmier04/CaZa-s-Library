@@ -13,6 +13,13 @@
 
   <div class="login-container">
     <h2>Login</h2>
+
+    {% if error %}
+      <div class="error-message">
+        {{ error }}
+      </div>
+    {% endif %}
+
     <form action="{{ url_for('frontend.login') }}" method="POST">
       <label for="role">Login as</label>
       <select id="role" name="role" required>
