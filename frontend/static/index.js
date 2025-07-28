@@ -15,6 +15,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBtn = document.querySelectorAll('.flash-close');
     const loginRedirect = document.getElementById('redirect-to-login');
     const homeRedirect = document.getElementById('redirect-to-homepage');
+    const sortSelect = document.querySelector('select[name="sort-by"]');
+    const searchForm = document.querySelector('form')
+
+    //Search Page buttons
+    if (sortSelect && searchForm) {
+        sortSelect.addEventListener('change', () => {
+            searchForm.submit();
+        })
+    }
 
     //toggle members list and edit button
     toggleSwitch.addEventListener('change', () => {

@@ -315,25 +315,72 @@ def favorites():
     'displays users favorited books'
     return render_template('favorites.html')
 
-@bp.route('/search')
+@bp.route('/search', methods=['GET', 'POST'])
 def search():
     'search page with sort by features and displays shorter book listing with image, title, and brief description of book'
+    if session.get('user_type') not in ('member', 'staff'):
+        return redirect(url_for('frontend.login'))
+
+    username = session.get('username')
+    user_type = session.get('user_type')
+
+    if not username or not user_type:
+        return redirect(url_for('frontend.login'))
+
+    #load user and staff data
+    if user_type == 'member':
+        users = load_users().get('users', [])
+        user_data = next((u for u in users if u['name'] == username), None)
+        if not user_data:
+            return redirect(url_for('frontend.login'))
+        user = Member(user_data['name'], user_data['member_id'], user_data['email'])
+    elif user_type == 'staff':
+        staff_list = load_staff().get('staff', [])
+        staff_data = next((s for s in staff_list if s['name'] == username), None)
+        if not staff_data:
+            return redirect(url_for('frontend.login'))
+        user = Staff(staff_data['name'], staff_data['staff_id'])
+    else:
+        return redirect(url_for('frontend.login'))
+
+    title = author = isbn = ""
+    books = []
+    message = None
+    sort_key = request.args.get('sort')
+
     books_data = load_books()
+    if request.method == 'POST':
+        title = request.form.get('title', '').strip()
+        author = request.form.get('author', '').strip()
+        isbn = request.form.get('isbn', '').strip()
 
-    sort_by = request.args.get("sort_by")
+        result = user.search(title=title, author=author, isbn=isbn)
 
-    filtered_books = books_data
+        if isinstance(result, str):
+            message = result
+            books = []
+        else:
+            books = result
+        
+        exact_match = None
+        if isbn:
+            exact_match = next((b for b in books if b['isbn'].lower() == isbn.lower()), None)
+        if not exact_match and title:
+            exact_match = next((b for b in books if b['title'].lower() == title.lower()), None)
+    else:
+        books = load_books()
+        exact_match = None
+    
+    if sort_key in ('title', 'author', 'genre'):
+        books.sort(key=lambda b: b.get(sort_key, '').lower())
 
-    if request.method == 'POST' and query:
-        query = request.form.get('query', '')
-        search_results = []
-        filtered_books = {
-            b for b in books_data
-            if query in b['title'].lower() or
-             query in b['author'].lower()
-        }
-        if session['user_type'] is 'member':
-            return redirect(url_for('listing_member'), query=query, results=search_results)
-    elif:
-            return redirect(url_for('listing_staff'), query=query, results=search_results)
-    return render_template('search.html')
+    return render_template(
+        'search.html',
+        books=books,
+        exact_match=exact_match,
+        message=message,
+        title=title,
+        author=author,
+        isbn=isbn,
+        sort_key=sort_key
+        )

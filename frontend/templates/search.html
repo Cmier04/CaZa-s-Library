@@ -5,14 +5,15 @@
 <div class="container">
   <h1>Search the Catalog</h1>
 
-  <form method="POST" action="/search" method="get" class="search-bar">
+  <form method="POST" action="{{ url_for('frontend.search')}}">
     <input type="text" placeholder="Search Books" id="search-query">
-    <select class="sort-by">
-      <option value="author">Author Last Name (A-Z)</option>
-      <option value="genre">Genre</option>
-      <option value="title">Title (A-Z)</option>
-      </select>
-    <button id="search-btn">Search</button>
+    <select name="sort-by">
+      <option value="">Sort By</option>
+      <option value="title" {% if sort_key =='title' %}selected{% endif %}>Title</option>
+      <option value="author" {% if sort_key == 'author' %}selected{% endif %}>Author</option>
+      <option value="genre" {% if sort_key == 'genre' %}selected{% endif %}>Genre</option>
+    </select>
+    <button type="submit" id="search-btn">Search</button>
   </form>
 
   <div class="book-list">
