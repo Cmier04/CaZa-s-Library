@@ -321,6 +321,7 @@ def search():
     books_data = load_books()
 
     query = request.form.get('query', '').lower().strip()
+    search_results = []
     filtered_books = books_data
     if request.method == 'POST' and query:
         filtered_books = {
@@ -331,4 +332,4 @@ def search():
              query in b['isbn']
         }
     
-    return render_template('search.html', books=filtered_books)
+    return render_template('search.html', books=filtered_books, query=query, results=search_results)
