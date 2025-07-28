@@ -3,15 +3,6 @@
 # Project Name: CaZa's Library
 # File Purpose: Defines functions needed for program
 
-# --------------------------List of TODO's-------------------------------
-    # TODO: ensure file information is correct and json files have information to read from
-    # TODO: test
-# NOTE: might need to add more functions to verify login information (may also be defined within the manager class)
-
-# --------------------------Changes Made---------------------------------
-  # Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
-  #..
-
 import json
 import os
 

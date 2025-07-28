@@ -12,7 +12,6 @@
 #--------------------------Changes Made---------------------------------
  # Comment changes made to this file here, keeps track of changes if commit contains multiple files.
   #..
-
 from backend.functions import *
 
 from datetime import datetime, date, timedelta
@@ -283,11 +282,11 @@ class Manager:
   def loginUser(self, role, name, id):
     # Login user based on name and id, as well as role
     staff_listing = load_staff() # Returns list of dictionaries with "name" and "staff_id" keys
+    users_listing = load_users()
     if ((role == "staff") and (self._checkStaffId(id))):
       staff_users = staff_listing["staff_users"]
       is_staff = False
       for item in staff_users:
-        print("DEBUG:", staff_listing)
         if ((name == item["name"]) and (id == item["staff_id"])):
           is_staff = True
           break
@@ -296,7 +295,7 @@ class Manager:
       else:
         return "Login denied."
     elif ((role == "member") and self._checkMemberId(id)):
-      users = self.users_listing["users"]
+      users = users_listing["users"]
       is_member = False
       for item in users:
         if ((name == item["name"]) and (id == item["member_id"])):
@@ -355,7 +354,8 @@ class Manager:
       return -1
 
   def _checkMemberId(self, member_id): # Return/display whether member id is valid (bool value)
-    users = self.users_listing["users"]
+    users_listing = load_users()
+    users = users_listing["users"]
     for item in users:
       if (member_id == item["member_id"]):
         return True
