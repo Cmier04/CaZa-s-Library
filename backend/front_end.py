@@ -320,16 +320,20 @@ def search():
     'search page with sort by features and displays shorter book listing with image, title, and brief description of book'
     books_data = load_books()
 
-    query = request.form.get('query', '').lower().strip()
-    search_results = []
+    sort_by = request.args.get("sort_by")
+
     filtered_books = books_data
+
     if request.method == 'POST' and query:
+        query = request.form.get('query', '')
+        search_results = []
         filtered_books = {
             b for b in books_data
             if query in b['title'].lower() or
-             query in b['author'].lower() or
-             query in b['description', ''].lower() or
-             query in b['isbn']
+             query in b['author'].lower()
         }
-    
-    return render_template('search.html', books=filtered_books, query=query, results=search_results)
+        if session['user_type'] is 'member':
+            return redirect(url_for('listing_member'), query=query, results=search_results)
+    elif:
+            return redirect(url_for('listing_staff'), query=query, results=search_results)
+    return render_template('search.html')
