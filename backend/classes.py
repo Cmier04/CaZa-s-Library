@@ -15,7 +15,7 @@
 
 from backend.functions import *
 
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 
 class Book:
   # Handles all book information and retrieves title, author, isbn from book.json
@@ -41,9 +41,11 @@ class Member:
     self.favorites = []
     self.rented = {} # Dictionary has book:rent_due_date key:value pairs
 
-  def _editAccount(self, name, email):
-    self._name = name
-    self._email = email
+  def _editAccount(self, new_name=None, new_email=None):
+    if new_name:
+      self._name = new_name
+    if new_email:
+      self._email = new_email
 
   def search(self, title, author, ISBN): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
     # Searches the book database via title, author, ISBN
@@ -131,15 +133,37 @@ class Member:
   
   def changeBookStatus(self):
     # Check rented books and change their status accordingly
-    # call Manager's function sendOverdueNotice, if there are any overdue books
-    # Reference for date object and functions: https://www.dataquest.io/blog/python-datetime/
+    date1 = date.isoformat(current_date)
+    rented_books = self.rented.keys()
+    rent_date = date1
+    for item in rented_books:
+      if ((title == item.getTitle()) and (author == item.author) and (isbn == item.isbn)):
+        rent_date = self.rented[item]
+    days_remaining = rent_date - date1
+    if (rent_date == date1):
+      return f"The book titled {title} and written by {author} is not overdue, but due today."
+    elif (days_remaining > timedelta(days=0)):
+      return f"The book titled {title} and written by {author} still has the following remaining days to be returned: {days_remaining}."
+    else:
+      manager1 = Manager(load_users())
+      notice = manager1._sendOverdueNotice(title, isbn)
+      books_load = load_books() # Returns list of dictionaries
+      copy = books_load
+      index = 0
+      for book in copy:
+        if ((title == book["title"]) and (author == book["author"]) and (isbn == book["isbn"])):
+          books_load[index]["overdue_status"] = "overdue"
+        else:
+          index += 1
+      save_books(books_load)
+      return notice
     pass
 
 class Staff:
   # Attributes information to staff
-  def __init__(self, username, id):
+  def __init__(self, username, staff_id):
     self._username = username
-    self._id = id
+    self._staff_id = staff_id
   
   def _editListing(self, new_title, author, isbn):
     # Edit books listing
@@ -240,9 +264,8 @@ class Staff:
 # combined the Staff/Member manager class into Manager, rename if necessary
 class Manager:
   # Manages all staff and member information while managing book returns and overdue notices
-  def __init__(self, user_data):
-    if (user_data == None):
-      self.users_listing = load_users()
+  def __init__(self, user_data=None):
+    self.user_data = user_data or load_users()
 
   def getOverdueBooks(self, member): # Checks the overdue status of books and adds them to dict
     overdue = []
@@ -261,12 +284,15 @@ class Manager:
     # Login user based on name and id, as well as role
     users_listing = load_users()
     staff_listing = load_staff() # Returns list of dictionaries with "name" and "staff_id" keys
-    if ((role == "staff") and self._checkStaffId(id)):
-      is_true = False
-      for item in staff_listing:
-        if ((name == item["name"]) and id == item["staff_id"]):
-          is_true = True
-      if (is_true):
+    if ((role == "staff") and (self._checkStaffId(id))):
+      staff_users = staff_listing["staff_users"]
+      is_staff = False
+      for item in staff_users:
+        print("DEBUG:", staff_listing)
+        if ((name == item["name"]) and (id == item["staff_id"])):
+          is_staff = True
+          break
+      if (is_staff):
         return "Staff Login succeeded."
       else:
         return "Login denied."
@@ -276,22 +302,32 @@ class Manager:
       for item in users:
         if ((name == item["name"]) and (id == item["member_id"])):
           is_member = True
+          break
       if (is_member):
         return "Member Login succeeded."
       else:
         return "Login denied."
     else:
       return "Login denied."
-
-      
+  
+  def update_member_info(self, member: Member):
+    user_data = load_users()
+    for u in user_data['users']:
+      if u['member_id'] == member._member_id:
+        u['name'] = member._name
+        u['email'] = member._email
+        save_users(user_data)
+        return True
+    return False
+            
   def add_new_member(self, name, email): # Add a new member to user.json file
     users_listing = load_users()
-    member_id = self._assignMemberId()
-    if member_id == -1:
-      return "Failed to add new member: Library is at capacity."
     for user in users_listing["users"]:
       if user["name"] == name and user["email"] == email:
         return "Failed to add new member: User already exists."
+    member_id = self._assignMemberId()
+    if member_id == -1:
+      return "Failed to add new member: Library is at capacity."
     new_member = {
       "name": name,
       "member_id": member_id,
@@ -299,8 +335,11 @@ class Manager:
       "favorites": [],
       "rented": {}
     }
+    users_listing["unused_ids"].remove(member_id)
     users_listing["users"].append(new_member)
     save_users(users_listing)
+    self.user_data = users_listing
+    self.users_listing = users_listing["users"]
     return f"New member added successfully. Member ID: {member_id}"
     
   def _assignMemberId(self): # Return member id, if available, and return -1 when not available
@@ -325,9 +364,11 @@ class Manager:
         return True
     return False
     
-  def _checkStaffId(self, id): # Return/display whether staff id is valid (bool value)
-    staff = load_staff()
-    for item in staff:
-      if (id == item["staff_id"]):
+  def _checkStaffId(self, staff_id): # Return/display whether staff id is valid (bool value)
+    staff_listing = load_staff()
+    staff_users = staff_listing["staff_users"]
+    for item in staff_users:
+      if (staff_id == item["staff_id"]):
         return True
     return False
+    print("Enters check staffID")

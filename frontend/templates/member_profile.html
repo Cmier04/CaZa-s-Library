@@ -9,21 +9,21 @@
   <div class="section">
     <h2>Member Information</h2>
     <div class="profile-info">
-      <p><strong>Name:</strong> John Doe</p>
-      <p><strong>Email:</strong> johndoe@example.com</p>
-      <p><strong>Member ID:</strong> M123456</p>
+      <p><strong>Name:</strong> {{ name }}</p>
+      <p><strong>Email:</strong> {{ email }}</p>
+      <p><strong>Member ID:</strong> {{ member_id }}</p>
     </div>
   </div>
 
   <!-- Edit Info -->
   <div class="section">
     <h2>Edit Your Info</h2>
-    <form>
-      <label for="edit-name">Full Name</label>
-      <input type="text" id="edit-name" placeholder="Enter new name" />
+    <form method="POST" action="{{ url_for('frontend.member_profile') }}">
+      <label for="edit_name">Username</label>
+      <input type="text" id="edit_name" placeholder="Enter new name" name="edit_name">
 
       <label for="edit-email">Email</label>
-      <input type="email" id="edit-email" placeholder="Enter new email" />
+      <input type="email" id="edit_email" placeholder="Enter new email" name="edit_email"/>
 
       <button type="submit">Update Info</button>
     </form>
@@ -32,10 +32,15 @@
   <!-- Checked Out Books -->
   <div class="section">
     <h2>Books Checked Out</h2>
+    {% if rented_books %}
     <ul>
-      <li>Clean Code – Due: July 30, 2025</li>
-      <li>Introduction to Algorithms – Due: August 2, 2025</li>
+      {% for title, due_date in rented_books.items() %}
+        <li>{{ title }} - Due: {{ due_date }}</li>
+      {% endfor %}
     </ul>
+    {% else %}
+      <p>No books currently checked out.</p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

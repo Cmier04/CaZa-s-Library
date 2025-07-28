@@ -5,6 +5,14 @@
 {% block content %}
 <div class="application-container">
   <h2>Apply for CaZa’s Library Membership</h2>
+  {% if redirect_to_login %}
+   <div id="redirect-to-login" data-href="{{ url_for('frontend.login') }}"></div>
+  {% endif %}
+  {% if redirect_to_homepage %}
+   <div id="redirect-to-homepage" data-href="{{ url_for('frontend.home_members') }}"></div>
+  {% endif %}
+
+  <!-- Main Content -->
   <form method="POST" action="{{ url_for('frontend.apply') }}">
     <label for="name">Full Name</label>
     <input type="text" id="name" name="name" required />
@@ -16,4 +24,3 @@
   </form>
 </div>
 {% endblock %}
-
