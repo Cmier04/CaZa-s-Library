@@ -2,14 +2,71 @@
 {% block title %}Staff Profile - CaZa’s Library{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h1>Staff Profile</h1>
+<div class="dashboard-header">
+  <h1>Staff Dashboard</h1>
+  <div class="staff-profile-page-wrapper">
 
-  <div class="section">
-    <p><strong>Name:</strong> Jane Doe</p>
-    <p><strong>Email:</strong> janedoe@example.com</p>
-    <p><strong>Staff ID:</strong> S123456</p>
-    <p><strong>Role:</strong> Catalog Manager</p>
+   <div class="center-panel">
+    <div class="staff-info-box">
+      <h3>Your Information</h3>
+      <p><strong>Name:</strong> {{ name }}</p>
+     <p><strong>Staff ID:</strong> {{ staff_id }}</p>
+     <p><strong>Role:</strong> Catalog and Member Manager</p>
+    </div>
+
+  <!-- Overdue Books Section -->
+   <div class="overdue-books-box">
+     <h3>Overdue Books</h3>
+     {% if overdue_books %}
+      <ul>
+        {% for book in overdue_books %}
+          <li><strong>{{ book.title }}</strong> (Due: {{ book.due_date }})</li>
+        {% endfor %}        
+      </ul>
+     {% else %}
+      <div class="overdue-alert-good">
+        No overdue books at the moment.
+      </div>
+    {% endif %}
+    </div>
+  </div>
+
+<div class="members-panel">
+  <!-- View Members List button -->
+  <div class="toggle-members-header">
+    <label class="switch-label">
+      View Members
+      <label class="switch">
+        <input type="checkbox" id="toggle-members-switch">
+        <span class="slider round"></span>
+      </label>
+  </div>
+    </label>
+
+    <!-- Members List -->
+    <div id="scrollable-container">
+      <div id="members-list" style="display: none">
+        <h3>Registered Members</h3>
+        <ul>
+          {% for member in members_list %}
+            <li class="member-entry" data-member-id="{{ member.member_id }}">
+              <p><strong>ID: </strong>{{ member.member_id }}</p>
+              <p><strong>Name: </strong>{{ member.name }}</p>
+              <p><strong>Email: </strong>{{ member.email }}</p>
+              <!-- Editable Fields -->
+              <form method="POST" action="{{ url_for('frontend.staff_profile') }}">
+                  <input type="hidden" name="member_id" value="{{ member['member_id'] }}">
+                  <input type="text" name="edit_name" value="{{ member['name'] }}">
+                  <input type="email" name="edit_email" value="{{ member['email'] }}">
+                  <button type="submit">Update</button>
+              </form>
+            </li>
+          {% else %}
+            <li>No members found.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

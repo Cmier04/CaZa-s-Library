@@ -14,12 +14,12 @@
         <h1>Welcome Back to CaZa’s Library</h1>
          <img src="https://ceseng.com/wp-content/uploads/2025/05/FOR-WEB-Manchester-library-exterior-rendering-high-res-1.jpg"
          alt="Library Exterior" class="library-image" />
-        <p>Hello staff member {{ username }}. Don't forget to check the overdue books!</p>
+        <p>Hello staff member {{ username }}! Don't forget to check the overdue books!</p>
     </div>
 
 {% if total_overdue > 0 %}
     <div class="staff-overdue-alert">
-        There {{ are if total_overdue > 1 else are }} {{ total_overdue }} overdue_book{{ 's' if total_overdue > 1 else '' }} that need attention.
+        There {{ 'are' if total_overdue > 1 else 'is' }} {{ total_overdue }} overdue_book{{ 's' if total_overdue > 1 else '' }} that need attention.
     </div>
 {% else %}
     <div class="staff-overdue-alert-good">
