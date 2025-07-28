@@ -17,6 +17,7 @@ import os
 
 user_file = 'users.json'
 book_file = 'books.json'
+staff_file = 'staff.json'
 
 def load_users():
     # load users from users.json
@@ -40,3 +41,10 @@ def load_books():
 def save_books(book_data):
     with open(book_file, 'w') as f:
         json.dump(book_data, f, indent=4)
+
+def load_staff():
+    #loads staff from staff.json
+    if not os.path.exists(staff_file):
+        return{}
+    with open (staff_file, 'r') as f:
+        return json.load(f)

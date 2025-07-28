@@ -1,2 +1,28 @@
-<!--Books Listing for Members Page-->
-<!-- Requires: navigation bar, list of info on books, like title, author, ISBN, and rental status -->
+{% extends 'base.html' %}
+{% block title %}Book Listings - CaZa’s Library{% endblock %}
+
+{% block content %}
+<div class="booklist-container">
+  <h1>Available Books</h1>
+
+  {# Later this can be replaced with: {% if books %} #}
+  <table class="book-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>ISBN</th>
+        <th>Rental Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td colspan="4" class="no-books">No books listed yet. Please check back later!</td>
+      </tr>
+    </tbody>
+  </table>
+  {# {% else %} <p class="no-books">No books available.</p> {% endif %} #}
+</div>
+{% endblock %}
+
+

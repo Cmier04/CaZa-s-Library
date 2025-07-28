@@ -18,16 +18,12 @@
 import os
 import sys
 from flask import Flask
-from backend.front_end import bp as front_bp
+from backend.front_end import bp as frontend_bp
 
 def create_app():
-    app = Flask(
-        __name__,
-        template_folder=os.path.abspath('..frontend/templates'), 
-        static_folder=os.path.abspath('../frontend/static'),
-    )
+    app = Flask(__name__, static_folder='frontend/static')
     app.secret_key = ''
 
-    app.register_blueprint(front_bp)
+    app.register_blueprint(frontend_bp)
     
     return app

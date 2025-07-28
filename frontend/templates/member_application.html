@@ -1,138 +1,47 @@
-<!--Member Application Page-->
-<!-- Requires: ask for user name and email, provide member id and link to login and adding member to database -->
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% set hide_nav = True %}
+{% block title %}Apply for Membership - CaZa's Library{% endblock %}
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Apply for Membership - CaZa's Library</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f6eee3;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 60px;
-            margin: 0;
-        }
+{% block content %}
+<div class="application-container">
+  <h2>Apply for CaZa’s Library Membership</h2>
+  <form id="applicationForm">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" name="name" required />
 
-        .application-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-        }
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required />
 
-        h2 {
-            margin-bottom: 1.5rem;
-            color: #2c3e50;
-        }
+    <button type="submit">Generate Member ID</button>
+  </form>
 
-        label {
-            display: block;
-            margin: 1rem 0 0.5rem;
-            text-align: left;
-            color: #333;
-        }
+  <div class="member-id" id="memberIdDisplay"></div>
 
-        input[type="text"],
-        input[type="email"] {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
+  <div class="login-link" id="loginLink">
+    <p>Your account has been created! <a href="{{ url_for('frontend.login') }}">Log in here</a></p>
+  </div>
+</div>
 
-        button {
-            margin-top: 1.5rem;
-            padding: 0.75rem 2rem;
-            background-color: #1abc9c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
+<script>
+  const form = document.getElementById('applicationForm');
+  const memberIdDisplay = document.getElementById('memberIdDisplay');
+  const loginLink = document.getElementById('loginLink');
 
-        button:hover {
-            background-color: #159e85;
-        }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-        .member-id {
-            margin-top: 1.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-        }
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const memberId = 'M' + Math.floor(100000 + Math.random() * 900000);
 
-        .login-link {
-            margin-top: 1rem;
-            display: none;
-            font-size: 0.95rem;
-        }
+    const members = JSON.parse(localStorage.getItem('caza_members')) || [];
+    members.push({ name, email, memberId });
+    localStorage.setItem('caza_members', JSON.stringify(members));
 
-        .login-link a {
-            color: #007bff;
-            text-decoration: none;
-        }
+    memberIdDisplay.textContent = `Your Member ID: ${memberId}`;
+    loginLink.style.display = 'block';
+    form.reset();
+  });
+</script>
+{% endblock %}
 
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-
-<body>
-
-    <div class="application-container">
-        <h2>Apply for CaZa’s Library Membership</h2>
-        <form id="applicationForm">
-            <label for="name">Full Name</label>
-            <input type="text" id="name" name="name" required />
-
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required />
-
-            <button type="submit">Generate Member ID</button>
-        </form>
-
-        <div class="member-id" id="memberIdDisplay"></div>
-
-        <div class="login-link" id="loginLink">
-            <p>Your account has been created! <a href="login.html">Log in here</a></p>
-        </div>
-    </div>
-
-    <script>
-        const form = document.getElementById('applicationForm');
-        const memberIdDisplay = document.getElementById('memberIdDisplay');
-        const loginLink = document.getElementById('loginLink');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const name = document.getElementById('name').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const memberId = 'M' + Math.floor(100000 + Math.random() * 900000); // Random 6-digit ID
-
-            // Simulated database using localStorage
-            const members = JSON.parse(localStorage.getItem('caza_members')) || [];
-            members.push({ name, email, memberId });
-            localStorage.setItem('caza_members', JSON.stringify(members));
-
-            // Show the generated ID and login link
-            memberIdDisplay.textContent = `Your Member ID: ${memberId}`;
-            loginLink.style.display = 'block';
-
-            form.reset();
-        });
-    </script>
-
-</body>
-
-</html>

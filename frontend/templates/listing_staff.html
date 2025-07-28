@@ -1,2 +1,37 @@
-<!--Books Listing for Staff Page-->
-<!-- Requires: navigation bar, view all listed info on books, edit listing, add/remove books -->
+{% extends 'base.html' %}
+{% block title %}Manage Book Listings - CaZa's Library (Staff){% endblock %}
+
+{% block content %}
+<div class="booklist-container">
+  <h1>Book Listings (Staff View)</h1>
+
+  <table class="book-table" id="bookTable">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>ISBN</th>
+        <th>Rental Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td colspan="5" class="no-books">No books listed yet. Use the form below to add one.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="add-form">
+    <h3>Add a New Book</h3>
+    <form>
+      <input type="text" placeholder="Title" required>
+      <input type="text" placeholder="Author" required>
+      <input type="text" placeholder="ISBN" required>
+      <input type="text" placeholder="Status" required>
+      <button type="submit">Add Book</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
