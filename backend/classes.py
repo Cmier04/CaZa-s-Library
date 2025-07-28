@@ -131,8 +131,9 @@ class Member:
       if ((item.getTitle() == title) and (item.author == author) (item.isbn == isbn)):
         self.favorites.remove(item)
   
-  def changeBookStatus(self):
+  def changeBookStatus(self, title, author, isbn, current_date): # current_date is in this string format: "YYYY-MM-DD"
     # Check rented books and change their status accordingly
+    # call Manager's function sendOverdueNotice, if there are any overdue books
     date1 = date.isoformat(current_date)
     rented_books = self.rented.keys()
     rent_date = date1
@@ -157,7 +158,6 @@ class Member:
           index += 1
       save_books(books_load)
       return notice
-    pass
 
 class Staff:
   # Attributes information to staff
@@ -282,7 +282,6 @@ class Manager:
   
   def loginUser(self, role, name, id):
     # Login user based on name and id, as well as role
-    users_listing = load_users()
     staff_listing = load_staff() # Returns list of dictionaries with "name" and "staff_id" keys
     if ((role == "staff") and (self._checkStaffId(id))):
       staff_users = staff_listing["staff_users"]
@@ -297,7 +296,7 @@ class Manager:
       else:
         return "Login denied."
     elif ((role == "member") and self._checkMemberId(id)):
-      users = users_listing["users"]
+      users = self.users_listing["users"]
       is_member = False
       for item in users:
         if ((name == item["name"]) and (id == item["member_id"])):
@@ -345,20 +344,18 @@ class Manager:
   def _assignMemberId(self): # Return member id, if available, and return -1 when not available
     # Assign a member id listed from "unused_ids" in the users.json
     # then delete the currently being used id from the list
-    users_listing = load_users()
-    unused_list = users_listing["unused_ids"]
+    unused_list = self.users_listing["unused_ids"]
     if (len(unused_list) > 0):
       member_id = unused_list[0]
       unused_list.remove(member_id)
-      users_listing["unused_ids"] = unused_list
-      save_users(users_listing)
+      self.users_listing["unused_ids"] = unused_list
+      save_users(self.users_listing)
       return member_id
     else:
       return -1
 
   def _checkMemberId(self, member_id): # Return/display whether member id is valid (bool value)
-    users_listing = load_users()
-    users = users_listing["users"]
+    users = self.users_listing["users"]
     for item in users:
       if (member_id == item["member_id"]):
         return True
@@ -371,4 +368,3 @@ class Manager:
       if (staff_id == item["staff_id"]):
         return True
     return False
-    print("Enters check staffID")
