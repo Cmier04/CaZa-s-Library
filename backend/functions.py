@@ -22,7 +22,7 @@ staff_file = 'staff.json'
 def load_users():
     # load users from users.json
     if not os.path.exists(user_file):
-        return {"There are no users"}
+        return {"error": "There are no users"}
     with open(user_file, 'r') as f:
         return json.load(f)
 
@@ -45,6 +45,6 @@ def save_books(book_data):
 def load_staff():
     #loads staff from staff.json
     if not os.path.exists(staff_file):
-        return{}
+        return{"error": "There are no staff"}
     with open (staff_file, 'r') as f:
         return json.load(f)

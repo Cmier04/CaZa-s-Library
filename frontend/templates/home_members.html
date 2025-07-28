@@ -11,13 +11,28 @@
     <!-- Welcome Message -->
     <div class="container">
         <h1>Welcome Back to CaZa’s Library</h1>
+         <img src="https://ceseng.com/wp-content/uploads/2025/05/FOR-WEB-Manchester-library-exterior-rendering-high-res-1.jpg"
+         alt="Library Exterior" class="library-image" />
         <p>Access your personalized dashboard, search the catalog, explore books, and manage your profile—all in one
             place.</p>
     </div>
-
-    <!-- Footer -->
-    <footer>
-        &copy; 2025 CaZa’s Library. All rights reserved.
-    </footer>
-
+    <!-- Member ID popup -->
+    {% if session.get('member_id_popup') %}
+     <div>
+            Welcome! Your Member ID is: <strong>{{ session['member_id_popup'] }}</strong>;
+     </div>
+    {% endif %}
+    
+    <!-- Overdue book Notice -->
+     {% if overdue_books and overdue_books|length > 0 %}
+        <div class="overdue-notice">
+            <h3>⚠️ You have {{ overdue_books|length }} overdue_book{{'s' if overdue_books|length > 1 else ''}}!</h3>
+            <ul>
+                {% for book in overdue_books %}
+                    <li>{{ book.title }} (Due: {{book.due_date }})</li>
+                {% endfor %}
+            </ul>
+            <p>Please return them as soon as possible.</p>
+        </div>
+    {% endif %}
 {% endblock %}

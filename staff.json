@@ -1,4 +1,5 @@
-[
+{
+    "staff_users": [
     {
         "name": "John",
         "staff_id": "1234"
@@ -11,4 +12,5 @@
         "name": "Harriet",
         "staff_id": "9600"
     }
-]
+    ]
+}

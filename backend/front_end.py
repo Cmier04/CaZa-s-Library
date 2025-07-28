@@ -21,14 +21,16 @@
 
 import sys
 import os
-from flask import Blueprint, render_template, request, redirect, session
-from backend.functions import load_users, save_users
-from backend.classes import Manager
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for
+from backend.functions import load_users, save_users, load_staff, load_books, save_books
+from backend.classes import Book, Member, Staff, Manager
+from datetime import datetime, date, timedelta
 
 bp = Blueprint('frontend', __name__, template_folder='../frontend/templates', static_folder='../frontend/static', static_url_path='/frontend_static')
 
 user_data = load_users()
-#manager = Manager(user_data)
+staff_data = load_staff()
+manager = Manager(user_data)
 
 #---------------------------------User Home Pages---------------------------------
 @bp.route('/')
@@ -38,19 +40,86 @@ def home():
 @bp.route('/home_members')
 def home_members():
     'members home page which gets rid of log in and sign up feature, replacing them with logout'
-    session['user_type'] = 'member'
-    return render_template('home_members.html', user_type = 'member')
+    if session.get('user_type') != 'member':
+        return redirect(url_for('frontend.login'))
+    
+    username = session.get('username')
+    users = load_users().get('users', [])
+    user_data = next((u for u in users if u['name'] == username), None)
+    if not user_data:
+        return redirect(url_for('frontend.login'))
+
+    member = Member(user_data['name'], user_data['member_id'], user_data['email'])
+    member.rented = user_data.get('rented', {})
+    
+    manager = Manager(user_data=None)
+    overdue_books = manager.getOverdueBooks(member)
+
+    #TODO: Fix message popup, members are not displayed their id's after creating their account
+    member_id_popup = session.pop('member_id_popup', None)
+    return render_template('home_members.html', member_id_popup=member_id_popup)
 
 @bp.route('/home_staff')
 def home_staff():
     'staff home page which gives them a summary of overdue books'
-    session['user_type'] = 'staff'
-    return render_template('home_staff.html', user_type = 'staff')
+    if session.get('user_type') != 'staff':
+        return redirect(url_for('frontend.login'))
+    
+    username = session.get('username')
+    staff_user = load_staff().get('staff_users', [])
+    staff_data = next((u for u in staff_user if u['name'] == username), None)
+    if not staff_data:
+        return redirect(url_for('frontend.login'))
+
+    staff = Staff(staff_data['name'], staff_data['staff_id'])
+
+    users = load_users().get('users', [])
+    total_overdue = 0
+    manager = Manager(user_data=None)
+
+    for user in users:
+        if 'name' in user and 'member_id' in user:
+            member = Member(user['name'], user['member_id'], user['email'])
+            member.rented = user.get('rented', {})
+            overdue_books = manager.getOverdueBooks(member)
+            total_overdue += len(overdue_books)
+        else:
+            print("Skipping malformed entry:", user)
+
+    return render_template('home_staff.html', username=username, total_overdue=total_overdue)
 
 #---------------------------------User Log in and Sign up---------------------------------
-@bp.route('/apply')
+@bp.route('/apply', methods=['GET', 'POST'])
 def apply():
     'implements the functionality of the member application page'
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+
+        global user_data
+        manager = Manager(user_data)
+        result = manager.add_new_member(name, email)
+
+        if result.startswith("New member added"):
+            member_id = result.split(":")[-1].strip()
+            session['user_type'] = 'member'
+            session['username'] = name
+            session['member_id'] = member_id
+            session['email'] = email
+            session['member_id_popup'] = member_id
+
+            user_data = manager.user_data
+
+            flash(f"Welcome {name.strip()}! You are now being redirected to your home page...", 'success')
+            return render_template('member_application.html', redirect_to_homepage=True)
+
+        elif result == "Failed to add new member: User already exists.":
+            flash(f"{result} Redirecting to login..", 'error')
+            return render_template('member_application.html', redirect_to_login=True)
+
+        flash(result, 'error')
+        return redirect(url_for('frontend.apply'))
+
     return render_template('member_application.html')
 
 @bp.route('/login', methods=['GET', 'POST'])
@@ -58,24 +127,36 @@ def login():
     'implements functions of the member/staff login page'
     if request.method == 'POST':
         username = request.form.get('username')
-        user_id = request.form.get('member')
+        user_id = request.form.get('memberid')
+        staff_id = request.form.get('memberid')
         role = request.form.get('role')
 
-        manager = Manager(user_data=None)
-
-        result = manager.loginUser(role, username, user_id)
+        if not role or not username or (role == 'member' and not user_id) or (role == 'staff' and not staff_id):
+            error = "All fields are required."
+            return render_template('login.html', error=error)
+        
+        manager = Manager(load_users())
+        user_role = user_id if role == 'member' else staff_id
+        result = manager.loginUser(role, username, user_role)
 
         if result == 'Member Login succeeded.':
             session['user_type'] = 'member'
             session['username'] = username
+            session['member_id'] = user_id
             return redirect(url_for('frontend.home_members'))
+
         elif result == "Staff Login succeeded.":
+            print(result)
             session['user_type'] = 'staff'
             session['username'] = username
+            session['staff_id'] = staff_id
+            print("redirecting to:", url_for('frontend.home_staff'))
             return redirect(url_for('frontend.home_staff'))
+
         else:
-            error: "Invalid name or ID. Please try again."
+            error = "Invalid username or ID. Please try again or choose Forgot Member ID."
             return render_template('login.html', error=error)
+
     return render_template('login.html')
 
 @bp.route('/logout')
@@ -90,15 +171,127 @@ def forgot_id():
     return render_template('forgot_id.html')
 
 #---------------------------------Member and Staff Profiles---------------------------------
-@bp.route('/member_profile')
+@bp.route('/member_profile', methods=['GET', 'POST'])
 def member_profile():
     'defines and implements what can be seen in the staff/members account'
-    return render_template('member_profile')
+    if not session.get('user_type') or session['user_type'] != 'member':
+        return redirect(url_for('frontend.login'))
 
-@bp.route('/staff_profile')
+    username = session.get('username')
+    member_id = session.get('member_id')
+
+    manager = Manager()
+    users = manager.user_data.get('users', [])
+
+    user_data = next((u for u in users if u['name'] == username and u['member_id'] == member_id), None)
+
+    if not user_data:
+        return redirect(url_for('frontend.login'))
+
+    member = Member(user_data['name'], user_data['member_id'], user_data['email'])
+
+    #TODO: Fix Error and Success Messages not displaying !!!!!
+    if request.method == 'POST':
+        new_name = request.form.get('edit_name')
+        new_email = request.form.get('edit_email')
+
+        member._editAccount(new_name=new_name, new_email=new_email)
+        success = manager.update_member_info(member)
+        if success:
+            session['username'] = member._name
+            session['email'] = member._email
+            flash("Profile updated successfully.", "success")
+            return redirect(url_for('frontend.member_profile'))
+        else:
+            flash("Error updating profile", 'error')
+        return redirect(url_for('frontend.member_profile'))
+
+    member.favorites = [
+        Book (
+        fav['title'],
+        fav['author'],
+        fav['isbn'],
+        fav.get('rent_status', 'open'),
+        fav.get('overdue_status', 'on time')
+    ) for fav in user_data.get('favorites', [])
+    ]
+    rented_raw = user_data.get('rented', {})
+    member.rented = rented_raw
+
+    manager = Manager(user_data=None)
+    overdue_books = manager.getOverdueBooks(member)
+
+    return render_template(
+        'member_profile.html',
+        name=member._name,
+        member_id=member._member_id,
+        email=member._email,
+        favorites=member.favorites,
+        rented_books=member.rented,
+        overdue_books=overdue_books
+    )
+
+@bp.route('/staff_profile', methods=['GET', 'POST'])
 def staff_profile():
     'implements overdue books list and displays them on the staff profile, also displays list of members and allows for editing'
-    return render_template('staff_profile.html')
+    if not session.get('user_type') or session['user_type'] != 'staff':
+        return redirect(url_for('frontend.login'))
+    
+    username = session.get('username')
+    staff_id = session.get('staff_id')
+
+    staff_data = next((s for s in load_staff().get('staff_users', []) if s['staff_id'] == staff_id), None)
+
+    if not staff_data:
+        flash("Staff not found", "error")
+        return redirect(url_for('frontend.login'))
+
+    staff = Staff(staff_data['name'], staff_data['staff_id'])
+    manager = Manager()
+
+    if request.method == 'POST':
+        member_id = request.form.get('member_id')
+        new_name = request.form.get('edit_name')
+        new_email = request.form.get('edit_email')
+
+        user_data = load_users()
+        members_list = user_data.get('users', [])
+
+        print("member_id form from ", member_id)
+        print("all member_ids", [u['member_id'] for u in members_list])
+        member_data = next((u for u in members_list if u['member_id'] == member_id), None)
+
+        if not member_data:
+            flash("Member not found.", "error")
+            print("user is not in user_data")
+        else:
+            print('enters else statement')
+            member = Member(member_data['name'], member_data['member_id'], member_data['email'])
+            member.rented = member_data.get('rented', [])
+
+            member._editAccount(new_name, new_email)
+
+            success = manager.update_member_info(member)
+            if success:
+                flash("Profile updated successfully.", "success")
+            else:
+                flash("Error updating profile", 'error')
+        return redirect(url_for('frontend.staff_profile'))
+
+    members_list = load_users().get('users', [])
+    overdue_books = []
+    for user in members_list:
+        member = Member(user['name'], user['member_id'], user['email'])
+        member.rented = user.get('rented', {})
+        overdue_books.extend(manager.getOverdueBooks(member))
+
+    return render_template(
+        'staff_profile.html',
+        members_list=members_list,
+        name=staff._username,
+        staff_id=staff._staff_id,
+        overdue_books = overdue_books
+    )
 
 #---------------------------------Book Listing Pages---------------------------------
 @bp.route('/listing_member')
@@ -125,4 +318,17 @@ def favorites():
 @bp.route('/search')
 def search():
     'search page with sort by features and displays shorter book listing with image, title, and brief description of book'
-    return render_template('search.html')
+    books_data = load_books()
+
+    query = request.form.get('query', '').lower().strip()
+    filtered_books = books_data
+    if request.method == 'POST' and query:
+        filtered_books = {
+            b for b in books_data
+            if query in b['title'].lower() or
+             query in b['author'].lower() or
+             query in b['description', ''].lower() or
+             query in b['isbn']
+        }
+    
+    return render_template('search.html', books=filtered_books)

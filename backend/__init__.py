@@ -19,11 +19,15 @@ import os
 import sys
 from flask import Flask
 from backend.front_end import bp as frontend_bp
+from dotenv import load_dotenv
 
 def create_app():
-    app = Flask(__name__, static_folder='frontend/static')
-    app.secret_key = ''
+  load_dotenv()
 
-    app.register_blueprint(frontend_bp)
+  app = Flask(__name__, static_folder='frontend/static')
+
+  app.secret_key = os.getenv("SECRET_KEY")
+
+  app.register_blueprint(frontend_bp)
     
-    return app
+  return app

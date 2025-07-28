@@ -6,8 +6,8 @@
   <h1>Search the Catalog</h1>
 
   <div class="search-bar">
-    <input type="text" placeholder="Enter title, author, or keyword">
-    <button>Search</button>
+    <input type="text" placeholder="Enter title, author, or keyword" id="search-query">
+    <button id="search-btn">Search</button>
   </div>
 
   <div class="genres">
@@ -19,11 +19,20 @@
   </div>
 
   <div class="book-list">
-    <div class="book">
-      <h3>Clean Code</h3>
-      <p><strong>Author:</strong> Robert C. Martin</p>
-      <p><strong>ISBN:</strong> 978-0132350884</p>
-      <p><strong>Status:</strong> Available</p>
-      <button c
+    {% if books %}
+     {% for book in books %}
+      <div class="book">
+        <h3>{{ book.title }}</h3>
+        <p><strong>Author:</strong> {{ book.author }}</p>
+        <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+        <p><strong>Status:</strong> {{book.rent_status|capitalize }}</p>
+      <button id="rent-book-{{ loop.index }}">Checkout</button>
+    </div>
+    {% endfor %}
+   {% else %}
+     <p>No books found.</p>
+   {% endif %}
+  </div>
+</div>
 
-
+{% endblock %}

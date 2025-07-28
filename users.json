@@ -1,18 +1,14 @@
 {
-   "users": 
-   [
-    {
-        
-    }
-   ],
-   "unused_ids":
-    [
-        "0653",
-        "7453",
-        "0642",
-        "4835",
-        "2113",
-        "3664",
+    "users": [
+        {
+            "name": "Ramon",
+            "member_id": "0653",
+            "email": "ramon123@gmail.com",
+            "favorites": [],
+            "rented": {}
+        }
+    ],
+    "unused_ids": [
         "2096",
         "9168",
         "9056",

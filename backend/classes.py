@@ -15,7 +15,7 @@
 
 from backend.functions import *
 
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 
 class Book:
   # Handles all book information and retrieves title, author, isbn from book.json
@@ -41,9 +41,11 @@ class Member:
     self.favorites = []
     self.rented = {} # Dictionary has book:rent_due_date key:value pairs
 
-  def _editAccount(self, name, email):
-    self._name = name
-    self._email = email
+  def _editAccount(self, new_name=None, new_email=None):
+    if new_name:
+      self._name = new_name
+    if new_email:
+      self._email = new_email
 
   def search(self, title, author, ISBN): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
     # Searches the book database via title, author, ISBN
@@ -89,7 +91,7 @@ class Member:
       first_date = date.fromisoformat(date)
       time_period = 14
       rent_date = first_date + timedelta(days=time_period)
-      self.rented[new_book] = rent_date
+      self.rented[isbn] = rent_date.isoformat()
       
       index = 0
       for item in copy_load:
@@ -132,7 +134,6 @@ class Member:
   def changeBookStatus(self, title, author, isbn, current_date): # current_date is in this string format: "YYYY-MM-DD"
     # Check rented books and change their status accordingly
     # call Manager's function sendOverdueNotice, if there are any overdue books
-    # Reference for date object and functions: https://www.dataquest.io/blog/python-datetime/
     date1 = date.isoformat(current_date)
     rented_books = self.rented.keys()
     rent_date = date1
@@ -160,9 +161,9 @@ class Member:
 
 class Staff:
   # Attributes information to staff
-  def __init__(self, username, id):
+  def __init__(self, username, staff_id):
     self._username = username
-    self._id = id
+    self._staff_id = staff_id
   
   def _editListing(self, new_title, author, isbn):
     # Edit books listing
@@ -263,10 +264,18 @@ class Staff:
 # combined the Staff/Member manager class into Manager, rename if necessary
 class Manager:
   # Manages all staff and member information while managing book returns and overdue notices
-  def __init__(self, user_data):
-    if (user_data == None):
-      self.users_listing = load_users()
+  def __init__(self, user_data=None):
+    self.user_data = user_data or load_users()
 
+  def getOverdueBooks(self, member): # Checks the overdue status of books and adds them to dict
+    overdue = []
+    today = datetime.today().date()
+    for book, due_date_str in member.rented.items():
+      due_date = datetime.strptime(due_date_str, "%Y-%m-%d").date()
+      if due_date < today:
+        overdue.append(book)
+    return overdue
+    
   def _sendOverdueNotice(self, title, isbn):
     # Display overdue notice and which book is overdue to user, display title and isbn of book
     return f"Notice to Member: The book titled {title} and with the ISBN: {isbn} is now overdue."
@@ -274,12 +283,15 @@ class Manager:
   def loginUser(self, role, name, id):
     # Login user based on name and id, as well as role
     staff_listing = load_staff() # Returns list of dictionaries with "name" and "staff_id" keys
-    if ((role == "staff") and self._checkStaffId(id)):
-      is_true = False
-      for item in staff_listing:
-        if ((name == item["name"]) and id == item["staff_id"]):
-          is_true = True
-      if (is_true):
+    if ((role == "staff") and (self._checkStaffId(id))):
+      staff_users = staff_listing["staff_users"]
+      is_staff = False
+      for item in staff_users:
+        print("DEBUG:", staff_listing)
+        if ((name == item["name"]) and (id == item["staff_id"])):
+          is_staff = True
+          break
+      if (is_staff):
         return "Staff Login succeeded."
       else:
         return "Login denied."
@@ -289,12 +301,45 @@ class Manager:
       for item in users:
         if ((name == item["name"]) and (id == item["member_id"])):
           is_member = True
+          break
       if (is_member):
         return "Member Login succeeded."
       else:
         return "Login denied."
     else:
       return "Login denied."
+  
+  def update_member_info(self, member: Member):
+    user_data = load_users()
+    for u in user_data['users']:
+      if u['member_id'] == member._member_id:
+        u['name'] = member._name
+        u['email'] = member._email
+        save_users(user_data)
+        return True
+    return False
+            
+  def add_new_member(self, name, email): # Add a new member to user.json file
+    users_listing = load_users()
+    for user in users_listing["users"]:
+      if user["name"] == name and user["email"] == email:
+        return "Failed to add new member: User already exists."
+    member_id = self._assignMemberId()
+    if member_id == -1:
+      return "Failed to add new member: Library is at capacity."
+    new_member = {
+      "name": name,
+      "member_id": member_id,
+      "email": email,
+      "favorites": [],
+      "rented": {}
+    }
+    users_listing["unused_ids"].remove(member_id)
+    users_listing["users"].append(new_member)
+    save_users(users_listing)
+    self.user_data = users_listing
+    self.users_listing = users_listing["users"]
+    return f"New member added successfully. Member ID: {member_id}"
     
   def _assignMemberId(self): # Return member id, if available, and return -1 when not available
     # Assign a member id listed from "unused_ids" in the users.json
@@ -316,9 +361,10 @@ class Manager:
         return True
     return False
     
-  def _checkStaffId(self, id): # Return/display whether staff id is valid (bool value)
-    staff = load_staff()
-    for item in staff:
-      if (id == item["staff_id"]):
+  def _checkStaffId(self, staff_id): # Return/display whether staff id is valid (bool value)
+    staff_listing = load_staff()
+    staff_users = staff_listing["staff_users"]
+    for item in staff_users:
+      if (staff_id == item["staff_id"]):
         return True
     return False
