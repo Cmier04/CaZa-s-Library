@@ -5,18 +5,15 @@
 <div class="container">
   <h1>Search the Catalog</h1>
 
-  <div class="search-bar">
-    <input type="text" placeholder="Enter title, author, or keyword" id="search-query">
+  <form method="POST" action="/search" method="get" class="search-bar">
+    <input type="text" placeholder="Search Books" id="search-query">
+    <select class="sort-by">
+      <option value="author">Author Last Name (A-Z)</option>
+      <option value="genre">Genre</option>
+      <option value="title">Title (A-Z)</option>
+      </select>
     <button id="search-btn">Search</button>
-  </div>
-
-  <div class="genres">
-    <button>Fiction</button>
-    <button>Non-Fiction</button>
-    <button>Science</button>
-    <button>History</button>
-    <button>Biography</button>
-  </div>
+  </form>
 
   <div class="book-list">
     {% if books %}

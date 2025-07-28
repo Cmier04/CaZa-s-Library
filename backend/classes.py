@@ -46,18 +46,17 @@ class Member:
     if new_email:
       self._email = new_email
 
-  def search(self, title, author, ISBN): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
+  def search(self, title, author, isbn): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
     # Searches the book database via title, author, ISBN
     books_load = load_books() # Returns a list of dictionaries
     list_of_books = []
     for item in books_load:
-      if ((title != "") and (title == item["title"]) and (author == "") and (ISBN == "")):
+      if ((title != "") and (title == item["title"]) and (author == "") and (isbn == "")):
         list_of_books.append(item) # Dictionary containing info on book found
-      elif ((author != "") and (author == item["author"]) and (title == "") and (ISBN == "")):
+      elif ((author != "") and (author == item["author"]) and (title == "") and (isbn == "")):
         list_of_books.append(item)
-      elif ((ISBN != "") and (ISBN == item["isbn"]) and (author == "") and (title == "")):
+      elif ((isbn != "") and (isbn == item["isbn"]) and (author == "") and (title == "")):
         list_of_books.append(item)
-
     if (len(list_of_books) == 0):
       return "No books found."
     else:
