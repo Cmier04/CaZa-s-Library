@@ -110,15 +110,15 @@ def apply():
 
             user_data = manager.user_data
 
-            flash(f"Welcome {name.strip()}! You are now being redirected to your home page...", 'success')
-            return render_template('member_application.html', redirect_to_homepage=True)
+            success = f"Welcome {name.strip()}! You are now being redirected to your home page..."
+            return render_template('home_members.html', success=success)
 
         elif result == "Failed to add new member: User already exists.":
-            flash(f"{result} Redirecting to login..", 'error')
-            return render_template('member_application.html', redirect_to_login=True)
-
-        flash(result, 'error')
-        return redirect(url_for('frontend.apply'))
+            already_member = "Oops! Looks like you're already a member. Don't worry, we're redirecting you to our login page..."
+            return render_template('login.html', already_member=already_member)
+        else:     
+            error = "Try re-entering you're email or username."
+            return render_template('member_application.html', error=error)
 
     return render_template('member_application.html')
 
