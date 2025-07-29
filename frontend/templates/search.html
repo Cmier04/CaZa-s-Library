@@ -6,7 +6,12 @@
   <h1>Search the Catalog</h1>
 
   <form method="POST" action="{{ url_for('frontend.search')}}">
-    <input type="text" placeholder="Search Books" id="search-query">
+    <div class="form-row"> 
+      <input type="text" name="title" placeholder="Title" value="{{ title }}">
+      <input type="text" name="author" placeholder="Author" value="{{ author }}">
+      <inout type="text" name="isbn" placeholder="ISBN" value="{{ isbn }}">
+
+    <!-- Sort feature -->
     <select name="sort-by">
       <option value="">Sort By</option>
       <option value="title" {% if sort_key =='title' %}selected{% endif %}>Title</option>
