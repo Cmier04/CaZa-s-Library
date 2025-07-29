@@ -1,28 +1,39 @@
 {% extends 'base.html' %}
-{% block title %}Book Listings - CaZa’s Library{% endblock %}
+{% block title %}{{ book.title }} - CaZa’s Library{% endblock %}
 
 {% block content %}
 <div class="booklist-container">
-  <h1>Available Books</h1>
+  <h1>{{ book.title }}</h1>
+  <p><strong>Author: </strong>{{ book.author }}</p>
+  <p><strong>ISBN: </strong>{{ book.isbn }}</p>
+  <p><strong>Genre: </strong>{{ book.genre }}</p>
+  <p><strong>Description: </strong>{{ book.description }}</p>
+  <p><strong>Status: </strong>{{ book.rent_status|capitalize }}</p>
 
-  {# Later this can be replaced with: {% if books %} #}
-  <table class="book-table">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>ISBN</th>
-        <th>Rental Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td colspan="4" class="no-books">No books listed yet. Please check back later!</td>
-      </tr>
-    </tbody>
-  </table>
-  {# {% else %} <p class="no-books">No books available.</p> {% endif %} #}
+  <form method="POST">
+    <input type="hidden" name="action" value="checkout">
+    <button id="checkout-btn"
+      {% if book.rent_status != 'open' %}disabled style="background:grey; cursor:not-allowed;"{% endif %}>
+      Checkout
+    </button>
+
+  <!-- Return Button (will show only if book is checked out to user) -->
+  {% if is_rented_by_user %}
+  <form method="POST">
+     <input type="hidden" name="action" value="return">
+     <button>Return Book</button>
+  </form>
+  {% endif %}
+
+    <!-- Favorite Books Button -->
+    <input id="favorite-btn" class="{ 'unfavorite' if is_favorited else 'favorite' }">
+    <button type="submit">
+        {% if is_favorite %}
+          ★ Favorited
+        {% else %}
+          ☆ Add to Favorites
+        {% endif %}
+    </button>
+  </form>
 </div>
 {% endblock %}
-
-
