@@ -328,6 +328,7 @@ def search():
         return redirect(url_for('frontend.login'))
 
     #load user and staff data
+    user = None
     if user_type == 'member':
         users = load_users().get('users', [])
         user_data = next((u for u in users if u['name'] == username), None)
@@ -367,13 +368,13 @@ def search():
             exact_match = next((b for b in books if b['isbn'].lower() == isbn.lower()), None)
         if not exact_match and title:
             exact_match = next((b for b in books if b['title'].lower() == title.lower()), None)
+        if sort_key in ('title', 'author', 'genre'):
+            books.sort(key=lambda b: b.get(sort_key, '').lower())
+      
     else:
         books = load_books()
         exact_match = None
-    
-    if sort_key in ('title', 'author', 'genre'):
-        books.sort(key=lambda b: b.get(sort_key, '').lower())
-
+      
     return render_template(
         'search.html',
         books=books,
