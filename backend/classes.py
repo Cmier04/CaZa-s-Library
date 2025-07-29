@@ -72,7 +72,7 @@ class Member:
     # Changes rent status of book, assigns rent period to Member
     # Limit of rented books at a time is 2 books
     # Check how many rented books Member has, and if they have 2 books currently, reject their request
-    if (len(self.rented == 2)):
+    if (len(self.rented) == 2):
       return "Rent book request rejected. Member is currently renting 2 books, which is the limit at one point in time."
     elif (rent_status == "closed"):
       return "Rent book request rejected. Book is currently being rented and unavailable to other Members."
@@ -83,7 +83,7 @@ class Member:
       new_book = Book(title, author, isbn, rent_status, overdue_status)
 
       # Reference for finding the rent_date with first_date and date and timedelta objects: https://www.dataquest.io/blog/python-datetime/
-      first_date = date.fromisoformat(date)
+      first_date = datetime.fromisoformat(date)
       time_period = 14
       rent_date = first_date + timedelta(days=time_period)
       self.rented[isbn] = rent_date.isoformat()
@@ -95,6 +95,8 @@ class Member:
         else:
           index += 1
       save_books(books_load)
+      manager = Manager()
+      manager.update_member_info(self)
       return "Book has been successfully rented. Please return it in 14 days."
 
   def returnBook(self, title, author, isbn):
@@ -266,7 +268,8 @@ class Manager:
     overdue = []
     today = datetime.today().date()
     for book, due_date_str in member.rented.items():
-      due_date = datetime.strptime(due_date_str, "%Y-%m-%d").date()
+      date_only = due_date_str.split('T')[0]
+      due_date = datetime.strptime(date_only, "%Y-%m-%d").date()
       if due_date < today:
         overdue.append(book)
     return overdue
@@ -310,9 +313,11 @@ class Manager:
       if u['member_id'] == member._member_id:
         u['name'] = member._name
         u['email'] = member._email
-        save_users(user_data)
-        return True
-    return False
+        u['rented'] = member.rented
+        u['favorites'] = [vars(f) for f in member.favorites]
+        break
+    save_users(user_data)
+    return True
             
   def add_new_member(self, name, email): # Add a new member to user.json file
     users_listing = load_users()

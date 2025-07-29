@@ -182,7 +182,6 @@ def member_profile():
 
     manager = Manager()
     users = manager.user_data.get('users', [])
-
     user_data = next((u for u in users if u['name'] == username and u['member_id'] == member_id), None)
 
     if not user_data:
@@ -192,19 +191,35 @@ def member_profile():
 
     #TODO: Fix Error and Success Messages not displaying !!!!!
     if request.method == 'POST':
-        new_name = request.form.get('edit_name')
-        new_email = request.form.get('edit_email')
+        if 'edit_name' in request.form or 'edit_email' in request.form:
+            new_name = request.form.get('edit_name')
+            new_email = request.form.get('edit_email')
 
-        member._editAccount(new_name=new_name, new_email=new_email)
-        success = manager.update_member_info(member)
-        if success:
-            session['username'] = member._name
-            session['email'] = member._email
-            flash("Profile updated successfully.", "success")
+            member._editAccount(new_name=new_name, new_email=new_email)
+            success = manager.update_member_info(member)
+            if success:
+                session['username'] = member._name
+                session['email'] = member._email
+                flash("Profile updated successfully.", "success")
+                return redirect(url_for('frontend.member_profile'))
+            else:
+                flash("Error updating profile", 'error')
             return redirect(url_for('frontend.member_profile'))
-        else:
-            flash("Error updating profile", 'error')
-        return redirect(url_for('frontend.member_profile'))
+        elif request.form.get('action') == 'return_book':
+            title = request.form.get('title')
+            author = request.form.get('author')
+            isbn = request.form.get('isbn')
+
+            member.returnBook(title=title, author=author, isbn=isbn)
+            success = manager.update_member_info(member)
+            user_data = next((u for u in users if u['name'] == username and u['member_id'] == member_id), None)
+
+            if user_data:
+                member.rented = user_data.get('rented', {})
+                flash(f"You have returned '{title}'", 'success')
+                return redirect(url_for('frontend.member_profile'))
+    else:
+        member.rented = user_data.get('rented', {})
 
     member.favorites = [
         Book (
@@ -213,12 +228,19 @@ def member_profile():
         fav['isbn'],
         fav.get('rent_status', 'open'),
         fav.get('overdue_status', 'on time')
-    ) for fav in user_data.get('favorites', [])
+        ) for fav in user_data.get('favorites', [])
     ]
-    rented_raw = user_data.get('rented', {})
-    member.rented = rented_raw
 
-    manager = Manager(user_data=None)
+    all_books = load_books()
+    checked_out_books = []
+
+    for isbn, due_date in member.rented.items():
+        book = next((b for b in all_books if b['isbn'] == isbn), None)
+        if book:
+            book_copy = book.copy()
+            book_copy['due_date'] = due_date
+            checked_out_books.append(book_copy)
+
     overdue_books = manager.getOverdueBooks(member)
 
     return render_template(
@@ -227,7 +249,7 @@ def member_profile():
         member_id=member._member_id,
         email=member._email,
         favorites=member.favorites,
-        rented_books=member.rented,
+        checked_out_books=checked_out_books,
         overdue_books=overdue_books
     )
 
@@ -294,10 +316,84 @@ def staff_profile():
     )
 
 #---------------------------------Book Listing Pages---------------------------------
-@bp.route('/listing_member')
+@bp.route('/listing_member', methods=['GET', "POST"])
 def listing_member():
     'displays book litings to members:checkout, rent status, description, etc'
-    return render_template('listing_member.html')
+    print("redirected because user type does not match")
+    if not session.get('user_type') or session['user_type'] != 'member':
+        return redirect(url_for('frontend.login'))
+    print("redirected because user type does not match")
+
+    username = session.get('username')
+    isbn = request.args.get('isbn') or reqiest.form.get('isbn')
+    
+    if not isbn:
+        flash("no book selected")
+        return redirect(url_for('frontend.search'))
+
+    user_data = next((u for u in load_users().get('users', []) if u['name'] == username), None)
+    if not user_data:
+        return redirect(url_for('frontend.login'))
+
+    member = Member(user_data['name'], user_data['member_id'], user_data['email'])
+    books = load_books()
+
+    book = next((b for b in books if b['isbn'] == isbn), None)
+    if not book:
+        flash("Book not found")
+        return redirect(url_for('frontend.search'))
+
+    checked_out_books = []
+    for rented_isbn, due_date, in member.rented.items():
+        rented_book = next((b for b in books if b['isbn'] == rented_isbn), None)
+        if rented_book:
+            book_copy = rented_book.copy()
+            book_copy['due_date'] = due_date
+            checked_out_books.append(book_copy)
+    
+    is_favorited = any(fav.isbn == isbn for fav in member.favorites)
+    is_rented_by_user = any(b['isbn'] == isbn for b in checked_out_books)
+
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        today = date.today().isoformat()
+
+        if action == 'checkout':
+            result = member.rentBook(
+                title=book['title'],
+                author=book['author'],
+                isbn=book['isbn'],
+                rent_status=book['rent_status'],
+                overdue_status=book.get('overdue_status', 'on time'),
+                date=today
+            )
+            flash(result)
+        elif action == 'return':
+            member.returnBook(book['title'], book['author'], book['isbn'])
+            flash("Book returned successfully.")
+        elif action == 'favorite':
+            member.addFavorite(
+                title=book['title'],
+                author=book['author'],
+                isbn=book['isbn'],
+                rent_status=book['rent_status'],
+                overdue_status=book.get('overdue_status', 'on time'),
+            )
+            flash("Book added to favorites.")
+        elif action == 'unfavorite':
+            member.removeFavorite(book['title', book['author'], book['isbn']])
+            flash("Book removed from favorites.")
+
+        return redirect(url_for('frontend.listing_member', isbn=isbn))
+
+    return render_template(
+        'listing_member.html',
+        book=book,
+        checked_out_books=checked_out_books,
+        is_favorited=is_favorited,
+        is_rented_by_user=is_rented_by_user
+    )
 
 @bp.route('/listing_staff')
 def listing_staff():
@@ -347,7 +443,7 @@ def search():
     title = author = isbn = ""
     books = []
     message = None
-    sort_key = request.args.get('sort')
+    sort_key = ""
 
     books_data = load_books()
     if request.method == 'POST':
@@ -359,7 +455,7 @@ def search():
 
         if isinstance(result, str):
             message = result
-            books = []
+            book = []
         else:
             books = result
         
@@ -368,13 +464,24 @@ def search():
             exact_match = next((b for b in books if b['isbn'].lower() == isbn.lower()), None)
         if not exact_match and title:
             exact_match = next((b for b in books if b['title'].lower() == title.lower()), None)
+        if exact_match:
+            print("exact match")
+            if user_type == 'staff':
+                return redirect(url_for('frontend.listing_staff', isbn=exact_match['isbn']))
+            if user_type == 'member':
+                return redirect(url_for('frontend.listing_member', isbn=exact_match['isbn']))
+
+        sort_key = request.form.get('sort-by', '').strip()
+        print('before sort')
         if sort_key in ('title', 'author', 'genre'):
             books.sort(key=lambda b: b.get(sort_key, '').lower())
-      
+            print('sort key:', sort_key)
+            print('sorted books')
+        return render_template('search.html', books=books, isbn=isbn, sort_key=sort_key)
     else:
         books = load_books()
         exact_match = None
-      
+    
     return render_template(
         'search.html',
         books=books,

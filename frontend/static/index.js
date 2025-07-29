@@ -17,6 +17,29 @@ document.addEventListener('DOMContentLoaded', function() {
     const homeRedirect = document.getElementById('redirect-to-homepage');
     const sortSelect = document.querySelector('select[name="sort-by"]');
     const searchForm = document.querySelector('form')
+    const favoriteBtn = document.getElementById('favorite-btn')
+
+    //Members Listing page
+    if (favoriteBtn) {
+        favoriteBtn.addEventListener('click', function () {
+            const isbn = favoriteBtn.getAttribute("data-isbn");
+
+            fetch('/favorite/${bookIsbn}', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status == "added") {
+                    favoriteBtn.classList.add("favorited");
+                    favoriteBtn.innerText
+                }
+            })
+        })
+    }
 
     //Search Page buttons
     if (sortSelect && searchForm) {

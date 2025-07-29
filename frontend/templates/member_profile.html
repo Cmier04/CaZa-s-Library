@@ -32,10 +32,28 @@
   <!-- Checked Out Books -->
   <div class="section">
     <h2>Books Checked Out</h2>
-    {% if rented_books %}
+    {% if checked_out_books %}
     <ul>
-      {% for title, due_date in rented_books.items() %}
-        <li>{{ title }} - Due: {{ due_date }}</li>
+      {% for book in checked_out_books %}
+        <li>
+          <strong>{{ book.title }}</strong> by {{ book.author }}<br>
+          ISBN: {{book.isbn }}<br>
+          Due Date: {{ book.due_date }}<br>
+          Status: 
+          {% if book.get('overdue_status') == 'overdue' %}
+            <span style="color:red;">Overdue</span>
+          {% else %}
+            <span style="color:green;">On Time</span>
+          {% endif %}
+          
+          <form method="POST">
+            <input type="hidden" name="action" value="return_book">
+            <input type="hidden" name="isbn" value="{{ book.isbn }}">
+            <input type="hidden" name="title" value="{{ book.title }}">
+            <input type="hidden" name="author" value="{{ book.author }}">
+            <button type="submit">Return Book</button>
+          </form>
+        </li>
       {% endfor %}
     </ul>
     {% else %}

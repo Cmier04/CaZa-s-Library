@@ -1,6 +1,6 @@
 [
     {
-        "title": "Behind the Beautiful Forevers",
+        "title": "Behind the Beautiful Forever's",
         "author": "Katherine Boo",
         "isbn": "9780812979329",
         "rent_status": "open",
@@ -41,7 +41,7 @@
         "isbn": "9780553296983",
         "rent_status": "open",
         "overdue_status": "on time",
-        "genre": "biography",
+        "genre": "Biography",
         "description": "This is the diary of Anne Frank, a young Jewish girl, who detailed in her diary her experience in hiding for two years with her family during Nazi occupation of the Netherlands."
     }
 ]
