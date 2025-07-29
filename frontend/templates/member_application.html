@@ -5,10 +5,9 @@
 {% block content %}
 <div class="application-container">
   <h2>Apply for CaZa’s Library Membership</h2>
-  {% if redirect_to_login %}
-   <div id="redirect-to-login" data-href="{{ url_for('frontend.login') }}"></div>
-  {% endif %}
-  {% if redirect_to_homepage %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if result.startswith("New member added") %}
+  {% elif redirect_to_homepage == True %}
    <div id="redirect-to-homepage" data-href="{{ url_for('frontend.home_members') }}"></div>
   {% endif %}
 

@@ -12,7 +12,7 @@
         "title": "Animal Farm",
         "author": "George Orwell",
         "isbn": "9780451526342",
-        "rent_status": "open",
+        "rent_status": "closed",
         "overdue_status": "on time",
         "genre": "Dystopian",
         "description": "A critique of the Russian Revolution and Stalinist era; this book follows a group of farm animals that rebel against their human farmer with the hope to create a new society of equality and properity."

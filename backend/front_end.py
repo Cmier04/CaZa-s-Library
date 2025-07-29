@@ -110,15 +110,15 @@ def apply():
 
             user_data = manager.user_data
 
-            flash(f"Welcome {name.strip()}! You are now being redirected to your home page...", 'success')
-            return render_template('member_application.html', redirect_to_homepage=True)
+            success = f"Welcome {name.strip()}! You are now being redirected to your home page..."
+            return render_template('home_members.html', success=success)
 
         elif result == "Failed to add new member: User already exists.":
-            flash(f"{result} Redirecting to login..", 'error')
-            return render_template('member_application.html', redirect_to_login=True)
-
-        flash(result, 'error')
-        return redirect(url_for('frontend.apply'))
+            already_member = "Oops! Looks like you're already a member. Don't worry, we're redirecting you to our login page..."
+            return render_template('login.html', already_member=already_member)
+        else:     
+            error = "Try re-entering you're email or username."
+            return render_template('member_application.html', error=error)
 
     return render_template('member_application.html')
 
@@ -265,8 +265,8 @@ def staff_profile():
     staff_data = next((s for s in load_staff().get('staff_users', []) if s['staff_id'] == staff_id), None)
 
     if not staff_data:
-        flash("Staff not found", "error")
-        return redirect(url_for('frontend.login'))
+        error = "Staff not found"
+        return redirect(url_for('frontend.login', error=error))
 
     staff = Staff(staff_data['name'], staff_data['staff_id'])
     manager = Manager()
@@ -312,7 +312,7 @@ def staff_profile():
         members_list=members_list,
         name=staff._username,
         staff_id=staff._staff_id,
-        overdue_books = overdue_books
+        overdue_books = overdue_books,
     )
 
 #---------------------------------Book Listing Pages---------------------------------
@@ -325,7 +325,7 @@ def listing_member():
     print("redirected because user type does not match")
 
     username = session.get('username')
-    isbn = request.args.get('isbn') or reqiest.form.get('isbn')
+    isbn = request.args.get('isbn') or request.form.get('isbn')
     
     if not isbn:
         flash("no book selected")
@@ -414,17 +414,28 @@ def favorites():
 @bp.route('/search', methods=['GET', 'POST'])
 def search():
     'search page with sort by features and displays shorter book listing with image, title, and brief description of book'
+    print("redirects before entering searc route")
     if session.get('user_type') not in ('member', 'staff'):
+        print("redirects when getting user type")
         return redirect(url_for('frontend.login'))
+    print("redirects before entering searc route")
 
     username = session.get('username')
+    name = session.get('name')
     user_type = session.get('user_type')
 
     if not username or not user_type:
+        print("redirects when checking username")
         return redirect(url_for('frontend.login'))
+    
+    if not name or not user_type:
+        print("redirects when checking username")
+        return redirect(url_for('frontend.login'))
+    print("redirects after checking username")
 
     #load user and staff data
     user = None
+    staff_list = None
     if user_type == 'member':
         users = load_users().get('users', [])
         user_data = next((u for u in users if u['name'] == username), None)
@@ -432,9 +443,13 @@ def search():
             return redirect(url_for('frontend.login'))
         user = Member(user_data['name'], user_data['member_id'], user_data['email'])
     elif user_type == 'staff':
-        staff_list = load_staff().get('staff', [])
-        staff_data = next((s for s in staff_list if s['name'] == username), None)
+        print("redirects aft if statement")
+        staff_list = load_staff().get('staff_users', [])
+        staff_data = next((s for s in staff_list if s['name'] == name), None)
+        print(f"This is {name}")
         if not staff_data:
+            print("thinks user is not staff")
+            print(f"The {user_type} is user")
             return redirect(url_for('frontend.login'))
         user = Staff(staff_data['name'], staff_data['staff_id'])
     else:

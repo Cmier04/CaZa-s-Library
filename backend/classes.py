@@ -344,12 +344,13 @@ class Manager:
   def _assignMemberId(self): # Return member id, if available, and return -1 when not available
     # Assign a member id listed from "unused_ids" in the users.json
     # then delete the currently being used id from the list
-    unused_list = self.users_listing["unused_ids"]
+    users_listing = load_users()
+    unused_list = users_listing["unused_ids"]
     if (len(unused_list) > 0):
       member_id = unused_list[0]
       unused_list.remove(member_id)
-      self.users_listing["unused_ids"] = unused_list
-      save_users(self.users_listing)
+      users_listing["unused_ids"] = unused_list
+      save_users(users_listing)
       return member_id
     else:
       return -1
