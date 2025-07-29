@@ -5,7 +5,9 @@
             "member_id": "0653",
             "email": "ramona123@gmail.com",
             "favorites": [],
-            "rented": {}
+            "rented": {
+                "9780812979329": "2025-08-11T00:00:00"
+            }
         }
     ],
     "unused_ids": [
