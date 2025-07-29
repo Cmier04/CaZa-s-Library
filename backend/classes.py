@@ -46,21 +46,18 @@ class Member:
     if new_email:
       self._email = new_email
 
-  def search(self, title, author, isbn): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
+  def search(self, title="", author="", isbn=""): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
     # Searches the book database via title, author, ISBN
-    books_load = load_books() # Returns a list of dictionaries
-    list_of_books = []
-    for item in books_load:
-      if ((title != "") and (title == item["title"]) and (author == "") and (isbn == "")):
-        list_of_books.append(item) # Dictionary containing info on book found
-      elif ((author != "") and (author == item["author"]) and (title == "") and (isbn == "")):
-        list_of_books.append(item)
-      elif ((isbn != "") and (isbn == item["isbn"]) and (author == "") and (title == "")):
-        list_of_books.append(item)
-    if (len(list_of_books) == 0):
-      return "No books found."
+    books = load_books() # Returns a list of dictionaries
+    matched_books = []
+    for book in books:
+      title_match = title.lower() in book['title'].lower() if title else True
+      author_match = author.lower() in book['author'].lower() if author else True
+      isbn_match = isbn.lower() in book['isbn'].lower() if isbn else True
+      if title_match and author_match and isbn_match:
+        matched_books.append(book)
     else:
-      return list_of_books
+      return matched_books if matched_books else "No books found."
 
   def viewListing(self):
     # Displays info on all available books
