@@ -421,17 +421,11 @@ def search():
     print("redirects before entering searc route")
 
     username = session.get('username')
-    name = session.get('name')
     user_type = session.get('user_type')
 
     if not username or not user_type:
         print("redirects when checking username")
         return redirect(url_for('frontend.login'))
-    
-    if not name or not user_type:
-        print("redirects when checking username")
-        return redirect(url_for('frontend.login'))
-    print("redirects after checking username")
 
     #load user and staff data
     user = None
@@ -445,8 +439,8 @@ def search():
     elif user_type == 'staff':
         print("redirects aft if statement")
         staff_list = load_staff().get('staff_users', [])
-        staff_data = next((s for s in staff_list if s['name'] == name), None)
-        print(f"This is {name}")
+        staff_data = next((s for s in staff_list if s['name'] == username), None)
+        print(f"This is {username}")
         if not staff_data:
             print("thinks user is not staff")
             print(f"The {user_type} is user")
