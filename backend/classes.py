@@ -220,22 +220,18 @@ class Staff:
         did_succeed = True
     return did_succeed
     
-  def search(self, title, author, ISBN):
-    # Search for a book in the books.json via title, author, or ISBN
-    books_load = load_books() # Returns a list of dictionaries
-    list_of_books = []
-    for item in books_load:
-      if ((title != "") and (title == item["title"]) and (author == "") and (ISBN == "")):
-        list_of_books.append(item) # Dictionary containing info on book found
-      elif ((author != "") and (author == item["author"]) and (title == "") and (ISBN == "")):
-        list_of_books.append(item)
-      elif ((ISBN != "") and (ISBN == item["isbn"]) and (author == "") and (title == "")):
-        list_of_books.append(item)
-
-    if (len(list_of_books) == 0):
-      return "No books found."
+  def search(self, title="", author="", isbn=""): # Returns string message, if search fails, and a list of dictionaries, if it succeeds
+    # Searches the book database via title, author, ISBN
+    books = load_books() # Returns a list of dictionaries
+    matched_books = []
+    for book in books:
+      title_match = title.lower() in book['title'].lower() if title else True
+      author_match = author.lower() in book['author'].lower() if author else True
+      isbn_match = isbn.lower() in book['isbn'].lower() if isbn else True
+      if title_match and author_match and isbn_match:
+        matched_books.append(book)
     else:
-      return list_of_books
+      return matched_books if matched_books else "No books found."
     
   def editBookTitle(self, new_title, current_isbn): # Returns string message indicating whether the function succeeded
     # First, search for book via ISBN, and then edit title of the book
