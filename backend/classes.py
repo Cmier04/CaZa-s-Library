@@ -33,12 +33,12 @@ class Book:
 
 class Member:
   # Defines what attributes are associated with being a member
-  def __init__(self, name, member_id, email):
+  def __init__(self, name, member_id, email, rented=None, favorites=None):
     self._name = name
     self._member_id = member_id
     self._email = email
-    self.favorites = []
-    self.rented = {} # Dictionary has book:rent_due_date key:value pairs
+    self.rented = rented if rented else {}
+    self.favorites = favorites if favorites else [] # Dictionary has book:rent_due_date key:value pairs
 
   def _editAccount(self, new_name=None, new_email=None):
     if new_name:
@@ -66,13 +66,16 @@ class Member:
 
   def _viewFavorites(self):
     # Displays info on all favorited books
-    return self.favorites
+    books_load = load_books()
+    return books_load
     
   def rentBook(self, title, author, isbn, rent_status, overdue_status, date): # date is a string of "YYYY-MM-DD"
     # Changes rent status of book, assigns rent period to Member
     # Limit of rented books at a time is 2 books
     # Check how many rented books Member has, and if they have 2 books currently, reject their request
     if (len(self.rented) == 2):
+      print("DEBUG: currently rented books =", self.rented)
+      print("DEBUG Count =", len(self.rented))
       return "Rent book request rejected. Member is currently renting 2 books, which is the limit at one point in time."
     elif (rent_status == "closed"):
       return "Rent book request rejected. Book is currently being rented and unavailable to other Members."
@@ -102,31 +105,61 @@ class Member:
   def returnBook(self, title, author, isbn):
     # Change status of book, delete book reference from attribute
     books_load = load_books()
-    copy_load = books_load
-    rented_books = self.rented.keys() # Returns a list of keys/Book()'s
-    for book in rented_books:
-      if ((title == book.getTitle()) and (author == book.author) and (isbn == book.isbn)):
-        del self.rented[book]
-    index = 0
-    for item in copy_load:
-      if ((title == item["title"]) and (author == item["author"]) and (isbn == item["isbn"])):
-        books_load[index]["rent_status"] = "open"
-        books_load[index]["overdue_status"] = "on time"
-      else:
-        index += 1
+    returned = False
+    if isbn not in self.rented:
+        return "This book is currently rented"
+    del self.rented[isbn]
+    for book in books_load:
+      if (
+          book['title'] == title and
+          book['author'] == author and
+          book['isbn'] == isbn
+        ):
+        book['rent_status'] = "open"
+        book["overdue_status"] = "on time"
+        break
     save_books(books_load)
+    manager = Manager()
+    manager.update_member_info(self)
 
   def addFavorite(self, title, author, isbn, rent_status, overdue_status):
     # Add book to favorites attribute
-    fav_book = Book(title, author, isbn, rent_status, overdue_status)
+    for book in self.favorites:
+      if book['isbn'] == isbn:
+        return
+    fav_book = {
+      'title': title,
+      'author': author,
+      'isbn': isbn,
+      'rent_status': rent_status,
+      'overdue_status': overdue_status
+    }
     self.favorites.append(fav_book)
+    manager = Manager()
+    manager.update_member_info(self)
+    return "Book added to favorites"
   
   def removeFavorite(self, title, author, isbn):
     # Remove book from favorites
     fav_list = self.favorites
     for item in fav_list:
-      if ((item.getTitle() == title) and (item.author == author) (item.isbn == isbn)):
+      if isinstance(item, dict):
+        is_match = (
+          item.get('title') == title and
+          item.get('author') == author and
+          item.get('isbn') == isbn
+        )
+      else:
+        is_match = (
+          item.get('title') == title and
+          item.get('author') == author and
+          item.get('isbn') == isbn
+        )
+      if is_match:
         self.favorites.remove(item)
+        manager = Manager()
+        manager.update_member_info(self)
+        break
   
   def changeBookStatus(self, title, author, isbn, current_date): # current_date is in this string format: "YYYY-MM-DD"
     # Check rented books and change their status accordingly
@@ -310,7 +343,7 @@ class Manager:
         u['name'] = member._name
         u['email'] = member._email
         u['rented'] = member.rented
-        u['favorites'] = [vars(f) for f in member.favorites]
+        u['favorites'] = member.favorites
         break
     save_users(user_data)
     return True

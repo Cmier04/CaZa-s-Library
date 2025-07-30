@@ -21,7 +21,7 @@
 
 import sys
 import os
-from flask import Blueprint, render_template, request, redirect, session, flash, url_for
+from flask import Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
 from backend.functions import load_users, save_users, load_staff, load_books, save_books
 from backend.classes import Book, Member, Staff, Manager
 from datetime import datetime, date, timedelta
@@ -187,7 +187,13 @@ def member_profile():
     if not user_data:
         return redirect(url_for('frontend.login'))
 
-    member = Member(user_data['name'], user_data['member_id'], user_data['email'])
+    member = Member(
+        user_data['name'],
+        user_data['member_id'],
+        user_data['email'],
+        rented=user_data.get('rented', {}),
+        favorites=user_data.get('favorites', [])
+        )
 
     #TODO: Fix Error and Success Messages not displaying !!!!!
     if request.method == 'POST':
@@ -218,18 +224,6 @@ def member_profile():
                 member.rented = user_data.get('rented', {})
                 flash(f"You have returned '{title}'", 'success')
                 return redirect(url_for('frontend.member_profile'))
-    else:
-        member.rented = user_data.get('rented', {})
-
-    member.favorites = [
-        Book (
-        fav['title'],
-        fav['author'],
-        fav['isbn'],
-        fav.get('rent_status', 'open'),
-        fav.get('overdue_status', 'on time')
-        ) for fav in user_data.get('favorites', [])
-    ]
 
     all_books = load_books()
     checked_out_books = []
@@ -248,7 +242,6 @@ def member_profile():
         name=member._name,
         member_id=member._member_id,
         email=member._email,
-        favorites=member.favorites,
         checked_out_books=checked_out_books,
         overdue_books=overdue_books
     )
@@ -321,6 +314,94 @@ def listing_member():
     'displays book litings to members:checkout, rent status, description, etc'
     print("redirected because user type does not match")
     if not session.get('user_type') or session['user_type'] != 'member':
+        print(f"User type invalid or not logged in: {session.get('user_type')}")
+        return redirect(url_for('frontend.login'))
+
+    username = session.get('username')
+    isbn = request.args.get('isbn') or request.form.get('isbn')
+    
+    if not isbn:
+        flash("no book selected")
+        return redirect(url_for('frontend.search'))
+
+    user_data = next((u for u in load_users().get('users', []) if u['name'] == username), None)
+    if not user_data:
+        return redirect(url_for('frontend.login'))
+
+    member = Member(user_data['name'], user_data['member_id'], user_data['email'], rented=user_data.get('rented', {}), favorites=user_data.get('favorites', []))
+    books = load_books()
+
+    book = next((b for b in books if b['isbn'] == isbn), None)
+    if not book:
+        flash("Book not found")
+        return redirect(url_for('frontend.search'))
+
+    checked_out_books = []
+    for rented_isbn, due_date, in member.rented.items():
+        rented_book = next((b for b in books if b['isbn'] == rented_isbn), None)
+        if rented_book:
+            book_copy = rented_book.copy()
+            book_copy['due_date'] = due_date
+            checked_out_books.append(book_copy)
+    
+    is_favorited = any(fav['isbn'] == isbn for fav in member.favorites)
+    is_rented_by_user = any(b['isbn'] == isbn for b in checked_out_books)
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        today = date.today().isoformat()
+
+        if action == 'checkout':
+            result = member.rentBook(
+                title=book['title'],
+                author=book['author'],
+                isbn=book['isbn'],
+                rent_status=book['rent_status'],
+                overdue_status=book.get('overdue_status', 'on time'),
+                date=today
+            )
+            flash(result)
+        elif action == 'return':
+            title = request.form.get('title')
+            author = request.form.get('author')
+            isbn = request.form.get('isbn')
+
+            member.returnBook(title=title, author=author, isbn=isbn)
+            success = manager.update_member_info(member)
+            if success:
+                flash(f"You have returned '{title}'.", "success")
+            else:
+                flash("Failed to update member info", "error")
+        elif action == 'favorite':
+            member.addFavorite(
+                title=book['title'],
+                author=book['author'],
+                isbn=book['isbn'],
+                rent_status=book['rent_status'],
+                overdue_status=book.get('overdue_status', 'on time'),
+            )
+            manager.update_member_info(member)
+            flash("Book added to favorites.")
+        elif action == 'unfavorite':
+            member.removeFavorite(book['title'], book['author'], book['isbn'])
+            manager.update_member_info(member)
+            flash("Book removed from favorites.")
+
+        return redirect(url_for('frontend.listing_member', isbn=isbn))
+
+    return render_template(
+        'listing_member.html',
+        book=book,
+        checked_out_books=checked_out_books,
+        is_favorited=is_favorited,
+        is_rented_by_user=is_rented_by_user
+    )
+
+@bp.route('/listing_staff')
+def listing_staff():
+    'allows staff to edit book information and view rent/overdue status'
+    print("redirected because user type does not match")
+    if not session.get('user_type') or session['user_type'] != 'staff':
         return redirect(url_for('frontend.login'))
     print("redirected because user type does not match")
 
@@ -335,7 +416,7 @@ def listing_member():
     if not user_data:
         return redirect(url_for('frontend.login'))
 
-    member = Member(user_data['name'], user_data['member_id'], user_data['email'])
+    user_data = Member(user_data['name'], user_data['member_id'], user_data['email'])
     books = load_books()
 
     book = next((b for b in books if b['isbn'] == isbn), None)
@@ -373,43 +454,62 @@ def listing_member():
             member.returnBook(book['title'], book['author'], book['isbn'])
             flash("Book returned successfully.")
         elif action == 'favorite':
-            member.addFavorite(
+            result = member.addFavorite(
                 title=book['title'],
                 author=book['author'],
                 isbn=book['isbn'],
                 rent_status=book['rent_status'],
                 overdue_status=book.get('overdue_status', 'on time'),
             )
-            flash("Book added to favorites.")
+            flash(result)
         elif action == 'unfavorite':
-            member.removeFavorite(book['title', book['author'], book['isbn']])
+            member.removeFavorite(book['title'], book['author'], book['isbn'])
             flash("Book removed from favorites.")
 
-        return redirect(url_for('frontend.listing_member', isbn=isbn))
+        return redirect(url_for('frontend.listing_staff', isbn=isbn))
 
     return render_template(
-        'listing_member.html',
+        'listing_staff.html',
         book=book,
         checked_out_books=checked_out_books,
         is_favorited=is_favorited,
         is_rented_by_user=is_rented_by_user
     )
-
-@bp.route('/listing_staff')
-def listing_staff():
-    'allows staff to edit book information and view rent/overdue status'
-    return render_template('listing_staff.html')
-
 #---------------------------------Other Pages/UI---------------------------------
 @bp.route('/about')
 def about_us():
     'displays library information'
     return render_template('about_us.html')
 
-@bp.route('/favorites')
+@bp.route('/favorites', methods=['GET', 'POST'])
 def favorites():
     'displays users favorited books'
-    return render_template('favorites.html')
+    username = session.get('username')
+    if not username:
+        return redirect(url_for('frontend.login'))
+    
+    user_data = next((u for u in load_users().get('users', []) if u['name'] == username), None)
+    if not user_data:
+        return redirect(url_for('frontend.login'))
+    
+    member = Member(user_data['name'], user_data['member_id'], user_data['email'])
+    member.favorites = user_data.get('favorites', [])
+
+    favorites = member.favorites
+
+    if request.method == 'POST':
+        action = request.form.get('action')
+        isbn = request.form.get('isbn')
+        title = request.form.get('title')
+        author = request.form.get('author')
+
+        if action == 'unfavorite':
+            member.removeFavorite(title, author, isbn)
+            manager = Manager()
+            manager.update_member_info(member)
+            flash(f"Removed '{title}' from favorites.", "success")
+            return redirect(url_for('frontend.favorites'))
+    return render_template('favorites.html', favorites=favorites)
 
 @bp.route('/search', methods=['GET', 'POST'])
 def search():

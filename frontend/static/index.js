@@ -17,29 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const homeRedirect = document.getElementById('redirect-to-homepage');
     const sortSelect = document.querySelector('select[name="sort-by"]');
     const searchForm = document.querySelector('form')
-    const favoriteBtn = document.getElementById('favorite-btn')
-
-    //Members Listing page
-    if (favoriteBtn) {
-        favoriteBtn.addEventListener('click', function () {
-            const isbn = favoriteBtn.getAttribute("data-isbn");
-
-            fetch('/favorite/${bookIsbn}', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status == "added") {
-                    favoriteBtn.classList.add("favorited");
-                    favoriteBtn.innerText
-                }
-            })
-        })
-    }
 
     //Search Page buttons
     if (sortSelect && searchForm) {
@@ -49,7 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //toggle members list and edit button
-    toggleSwitch.addEventListener('change', () => {
+    if (toggleSwitch) {
+        toggleSwitch.addEventListener('change', () => {
         const visible = toggleSwitch.checked;
         membersList.style.display = visible ? 'block' : 'none';
 
@@ -57,24 +35,30 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!visible) {
             document.querySelectorAll('.edit-form').forEach(form => form.style.display = 'none');
         }
-    });
+        });
+    }
 
     //enable edit mode
-    editMembersBtn.addEventListener('click', () => {
-        document.querySelectorAll('.edit-form').forEach(form => {
-            if (form.style.display == 'none') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
-    });
+    if (editMembersBtn) {
+        editMembersBtn.addEventListener('click', () => {
+            document.querySelectorAll('.edit-form').forEach(form => {
+                if (form.style.display == 'none') {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            });
+        });
+    }
 
     //Dismiss flash messages using close button
-    closeBtn.forEach(button => {
-        button.addEventListener('click', function () {
-            this.parentElement.style.display = 'none';
+    if (closeBtn) {
+        closeBtn.forEach(button => {
+            button.addEventListener('click', function () {
+                this.parentElement.style.display = 'none';
+            });
         });
-    });
+    }
 
     //Auto-dismiss messages after 5 seconds
     setTimeout(() => {
@@ -97,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href =  homeRedirect.dataset.href;
         }, 3000);
     }
-});
 });
 
 //cancel button

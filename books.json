@@ -3,7 +3,7 @@
         "title": "Behind the Beautiful Forever's",
         "author": "Katherine Boo",
         "isbn": "9780812979329",
-        "rent_status": "closed",
+        "rent_status": "open",
         "overdue_status": "on time",
         "genre": "Biography",
         "description": "Author Katherine Boo describes her observations when she visited Mumbai, India. The book follows the lives of residents of Annawadi, a slum near Mumbai airport, and gives outsiders a look into poverty, inequality, and resiliance in modern India."
@@ -12,7 +12,7 @@
         "title": "Animal Farm",
         "author": "George Orwell",
         "isbn": "9780451526342",
-        "rent_status": "closed",
+        "rent_status": "open",
         "overdue_status": "on time",
         "genre": "Dystopian",
         "description": "A critique of the Russian Revolution and Stalinist era; this book follows a group of farm animals that rebel against their human farmer with the hope to create a new society of equality and properity."

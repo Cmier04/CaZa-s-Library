@@ -1,10 +1,18 @@
 {
     "users": [
         {
-            "name": "Ramon",
+            "name": "Ramona",
             "member_id": "0653",
             "email": "ramon123@gmail.com",
-            "favorites": [],
+            "favorites": [
+                {
+                    "title": "Behind the Beautiful Forever's",
+                    "author": "Katherine Boo",
+                    "isbn": "9780812979329",
+                    "rent_status": "open",
+                    "overdue_status": "on time"
+                }
+            ],
             "rented": {}
         }
     ],
