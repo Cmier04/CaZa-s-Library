@@ -1,17 +1,43 @@
 {
     "users": [
         {
-            "name": "Ramon",
+            "name": "Ramona",
             "member_id": "0653",
             "email": "ramon123@gmail.com",
+            "favorites": [
+                {
+                    "title": "Behind the Beautiful Forever's",
+                    "author": "Katherine Boo",
+                    "isbn": "9780812979329",
+                    "rent_status": "open",
+                    "overdue_status": "on time"
+                }
+            ],
+            "rented": {}
+        },
+        {
+            "name": "Squirrel",
+            "member_id": "4406",
+            "email": "christine.n.mier@gmail.com",
+            "favorites": [],
+            "rented": {}
+        },
+        {
+            "name": "dsa",
+            "member_id": "7628",
+            "email": "christine.n.mier@gmail.com",
+            "favorites": [],
+            "rented": {}
+        },
+        {
+            "name": "fsdf",
+            "member_id": "1724",
+            "email": "christine.n.mier@gmail.com",
             "favorites": [],
             "rented": {}
         }
     ],
     "unused_ids": [
-        "4406",
-        "7628",
-        "1724",
         "9242",
         "3861"
     ]

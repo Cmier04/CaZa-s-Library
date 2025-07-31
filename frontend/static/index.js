@@ -12,34 +12,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleSwitch = document.getElementById('toggle-members-switch');
     const membersList = document.getElementById('members-list');
     const editMembersBtn = document.getElementById('edit-members-btn');
-    const closeBtn = document.querySelectorAll('.flash-close');
+    const closeBtn = document.querySelectorAll('.close-btn');
     const loginRedirect = document.getElementById('redirect-to-login');
     const homeRedirect = document.getElementById('redirect-to-homepage');
     const sortSelect = document.querySelector('select[name="sort-by"]');
     const searchForm = document.querySelector('form')
-    const favoriteBtn = document.getElementById('favorite-btn')
+    const deleteBtn = document.querySelectorAll('.delete-button');
 
-    //Members Listing page
-    if (favoriteBtn) {
-        favoriteBtn.addEventListener('click', function () {
-            const isbn = favoriteBtn.getAttribute("data-isbn");
-
-            fetch('/favorite/${bookIsbn}', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status == "added") {
-                    favoriteBtn.classList.add("favorited");
-                    favoriteBtn.innerText
-                }
-            })
-        })
-    }
+    //Staff listing page - Delete Listing
+    deleteBtn.forEach(button => {
+        button.addEventListener("click", function(event) {
+            const confirmed = confirm("Are you sure you want to delete this book?");
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
+    });
 
     //Search Page buttons
     if (sortSelect && searchForm) {
@@ -49,7 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //toggle members list and edit button
-    toggleSwitch.addEventListener('change', () => {
+    if (toggleSwitch) {
+        toggleSwitch.addEventListener('change', () => {
         const visible = toggleSwitch.checked;
         membersList.style.display = visible ? 'block' : 'none';
 
@@ -57,32 +46,40 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!visible) {
             document.querySelectorAll('.edit-form').forEach(form => form.style.display = 'none');
         }
-    });
+        });
+    }
 
     //enable edit mode
-    editMembersBtn.addEventListener('click', () => {
-        document.querySelectorAll('.edit-form').forEach(form => {
-            if (form.style.display == 'none') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
-    });
+    if (editMembersBtn) {
+        editMembersBtn.addEventListener('click', () => {
+            document.querySelectorAll('.edit-form').forEach(form => {
+                if (form.style.display == 'none') {
+                    form.style.display = 'block';
+                } else {
+                    form.style.display = 'none';
+                }
+            });
+        });
+    }
 
     //Dismiss flash messages using close button
-    closeBtn.forEach(button => {
-        button.addEventListener('click', function () {
-            this.parentElement.style.display = 'none';
+    setTimeout(() => {
+        closeBtn.forEach(button => {
+            button.addEventListener('click', () => {
+                const flash = button.closest('.flash-message');
+                if (flash) flash.remove();                
+            });
         });
-    });
+    }, 3000);
+    
 
     //Auto-dismiss messages after 5 seconds
     setTimeout(() => {
-        const flash = document.querySelector('.flash-message');
-        if (flash) {
-            flash.style.display = 'none';
-        }
-    }, 5000);
+        const flash = document.querySelectorAll('.flash-container');
+        flash.forEach(flash => {
+            flash.remove()
+        });
+    }, 3000);
 
     //redirect users to login page if user already exists
     if (loginRedirect) {
@@ -97,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href =  homeRedirect.dataset.href;
         }, 3000);
     }
-});
 });
 
 //cancel button

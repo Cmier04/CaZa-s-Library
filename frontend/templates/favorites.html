@@ -5,8 +5,26 @@
 {% block content %}
 <div class="favorites-container">
     <h1>My Favorite Books</h1>
-    <p class="empty-message">
+    {% if favorites %}
+        <ul>
+        {% for book in favorites %}
+        <li>
+            <strong>{{ book.title }}</strong> by {{ book.author }}<br>
+            ISBN: {{book.isbn }}<br>            
+            <form method="POST">
+                <input type="hidden" name="action" value="unfavorite">
+                <input type="hidden" name="isbn" value="{{ book.isbn }}">
+                <input type="hidden" name="title" value="{{ book.title }}">
+                <input type="hidden" name="author" value="{{ book.author }}">
+                <button type="submit">⭐ Remove from Favorites</button>
+            </form>
+        </li>
+      {% endfor %}
+        </ul>
+    {% else %}
+     <p class="empty-message">
         You haven't added any favorite books yet. Start browsing and click the ⭐ to save your favorites!
-    </p>
+     </p>
+    {% endif %}
 </div>
 {% endblock %}

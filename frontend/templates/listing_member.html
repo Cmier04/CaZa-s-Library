@@ -11,28 +11,39 @@
   <p><strong>Status: </strong>{{ book.rent_status|capitalize }}</p>
 
   <form method="POST">
-    <input type="hidden" name="action" value="checkout">
-    <button id="checkout-btn"
-      {% if book.rent_status != 'open' %}disabled style="background:grey; cursor:not-allowed;"{% endif %}>
-      Checkout
+    <input type="hidden" name="action" value="{% if is_rented_by_user %}return{% else %}checkout{% endif %}">
+    <input type="hidden" name="isbn" value="{{ book.isbn }}">
+    <input type="hidden" name="title" value="{{ book.title }}">
+    <input type="hidden" name="author" value="{{ book.author }}">
+    <button type="submit" id="checkout-btn"
+      {% if is_rented_by_user %}
+        class="rented"
+      {% else %}
+        class="not-rented"
+      {% endif %}>
+      {% if is_rented_by_user %}
+        Return
+      {% else %}
+        Checkout
+      {% endif %}
     </button>
-
-  <!-- Return Button (will show only if book is checked out to user) -->
-  {% if is_rented_by_user %}
-  <form method="POST">
-     <input type="hidden" name="action" value="return">
-     <button>Return Book</button>
   </form>
-  {% endif %}
 
     <!-- Favorite Books Button -->
-    <input id="favorite-btn" class="{ 'unfavorite' if is_favorited else 'favorite' }">
-    <button type="submit">
-        {% if is_favorite %}
-          ★ Favorited
-        {% else %}
-          ☆ Add to Favorites
-        {% endif %}
+  <form method="POST">
+    <input type="hidden" name="action" value="{% if is_favorited %}unfavorite{% else %}favorite{% endif %}">
+    <input type="hidden" name="isbn" value="{{ book.isbn }}">
+    <button type="submit" id="favorite-btn"
+      {% if is_favorited %}
+        class="favorited"
+      {% else %}
+        class="not-favorited"
+      {% endif %}>
+      {% if is_favorited %}
+        ★ Remove from Favorites
+      {% else %}
+        ☆ Add to Favorites
+      {% endif %}
     </button>
   </form>
 </div>

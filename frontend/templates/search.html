@@ -21,22 +21,51 @@
     <button type="submit" id="search-btn">Search</button>
   </form>
 
+  <!-- Book List -->
   <div class="book-list">
     {% if books %}
       {% for book in books %}
       <div class="book">
-        <a href="{{ url_for('frontend.listing_member', isbn=book.isbn) }}">
-          <h3>{{ book.title }}</h3>
-          <p><strong>Author:</strong> {{ book.author }}</p>
-          <p><strong>ISBN:</strong> {{ book.isbn }}</p>
-          <p><strong>Status:</strong> {{book.rent_status|capitalize }}</p>
-        </a>
+        {% if users_type == 'member' %}
+          <a href="{{ url_for('frontend.listing_member', isbn=book.isbn) }}">
+        {% else %}
+          <a href="{{ url_for('frontend.listing_staff', isbn=book.isbn) }}">
+        {% endif %}
+            <h3>{{ book.title }}</h3>
+            <p><strong>Author:</strong> {{ book.author }}</p>
+            <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+            <p><strong>Status:</strong> {{book.rent_status|capitalize }}</p>
+          </a>
       </div>
       {% endfor %}
     {% else %}
       <p>No books found.</p>
     {% endif %}
   </div>
+  <!-- Edit Books feature -->
+  {% if users_type == 'staff' %}
+    <h2>Add New Book</h2>
+    <form method="POST" action="{{ url_for('frontend.search') }}">
+      <input type="hidden" name="action" value="add_book">
+      <label for="title">Title*</label>
+      <input type="text" name="title" id="title" required>
+
+      <label for="author">Author*</label>
+      <input type="text" name="author" id="author" required>
+
+      <label for="isbn">ISBN*</label>
+      <input type="text" name="isbn" id="isbn" required>
+
+      <label for="genre">Genre*</label>
+      <input type="text" name="genre" id="genre" required>
+
+      <label for="description">Description*</label>
+      <input type="text" name="description" id="description" required>
+
+      <button type="submit">Add Book</button>
+    </form>
+  {% endif %}
 </div>
+
 
 {% endblock %}
