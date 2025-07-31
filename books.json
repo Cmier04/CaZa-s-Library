@@ -43,5 +43,23 @@
         "overdue_status": "on time",
         "genre": "Biography",
         "description": "This is the diary of Anne Frank, a young Jewish girl, who detailed in her diary her experience in hiding for two years with her family during Nazi occupation of the Netherlands."
+    },
+    {
+        "title": "dasd",
+        "author": "adsad",
+        "isbn": "665265",
+        "rent_status": "closed",
+        "overdue_status": "on time",
+        "genre": "ads",
+        "description": "dasd"
+    },
+    {
+        "title": "sad",
+        "author": "sdasdfg",
+        "isbn": "74848",
+        "rent_status": "closed",
+        "overdue_status": "on time",
+        "genre": "sfdsfs",
+        "description": "sfsdff"
     }
 ]

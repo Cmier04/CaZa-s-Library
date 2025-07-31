@@ -568,49 +568,72 @@ def search():
     books = []
     message = None
     sort_key = ""
+    exact_match = None
 
     books_data = load_books()
     if request.method == 'POST':
-        title = request.form.get('title', '').strip()
-        author = request.form.get('author', '').strip()
-        isbn = request.form.get('isbn', '').strip()
+        action = request.form.get('action')
 
-        result = user.search(title=title, author=author, isbn=isbn)
+        if action == 'add_book' and user_type == 'staff':
+            title = request.form.get('title', '').strip()
+            author = request.form.get('author', '').strip()
+            isbn = request.form.get('isbn', '').strip()
+            genre = request.form.get('genre', '').strip()
+            description = request.form.get('description').strip()
 
-        if isinstance(result, str):
-            message = result
-            book = []
+            if not (title and author and isbn):
+                flash("Title, author, and ISBN are required to add a book.", "error")
+            
+            books_data = load_books()
+            if any(b['isbn'].lower() == isbn.lower() for b in books_data):
+                flash("A book with this ISBN already exists", "error")
+            else:
+                user._addBook(title, author, isbn, genre, description)
+
+                print("Saved books to file")
+                flash(f"Booke '{title}' added successfuly.", "success")
+            return redirect(url_for('frontend.search'))
         else:
-            books = result
-        
-        exact_match = None
-        if isbn:
-            exact_match = next((b for b in books if b['isbn'].lower() == isbn.lower()), None)
-        if not exact_match and title:
-            exact_match = next((b for b in books if b['title'].lower() == title.lower()), None)
-        if exact_match:
-            print("exact match")
-            if user_type == 'staff':
-                return redirect(url_for('frontend.listing_staff', isbn=exact_match['isbn']))
-            if user_type == 'member':
-                return redirect(url_for('frontend.listing_member', isbn=exact_match['isbn']))
+            title = request.form.get('title', '').strip()
+            author = request.form.get('author', '').strip()
+            isbn = request.form.get('isbn', '').strip()
 
-        sort_key = request.form.get('sort-by', '').strip()
-        print('before sort')
-        if sort_key in ('title', 'author', 'genre'):
-            books.sort(key=lambda b: b.get(sort_key, '').lower())
-            print('sort key:', sort_key)
-            print('sorted books')
-        return render_template(
-            'search.html',
-            books=books,
-            isbn=isbn,
-            sort_key=sort_key,
-            users_type=users_type
-        )
+            result = user.search(title=title, author=author, isbn=isbn)
+
+            if isinstance(result, str):
+                message = result
+                book = []
+            else:
+                books = result
+            
+            exact_match = None
+            if isbn:
+                exact_match = next((b for b in books if b['isbn'].lower() == isbn.lower()), None)
+            if not exact_match and title:
+                exact_match = next((b for b in books if b['title'].lower() == title.lower()), None)
+            if exact_match:
+                print("exact match")
+                if user_type == 'staff':
+                    return redirect(url_for('frontend.listing_staff', isbn=exact_match['isbn']))
+                if user_type == 'member':
+                    return redirect(url_for('frontend.listing_member', isbn=exact_match['isbn']))
+
+            sort_key = request.form.get('sort-by', '').strip()
+            print('before sort')
+            if sort_key in ('title', 'author', 'genre'):
+                books.sort(key=lambda b: b.get(sort_key, '').lower())
+                print('sort key:', sort_key)
+                print('sorted books')
+            return render_template(
+                'search.html',
+                books=books,
+                isbn=isbn,
+                sort_key=sort_key,
+                users_type=users_type
+            )
     else:
         books = load_books()
-        exact_match = None
+        print("Loaded books count:", len(books))
     
     return render_template(
         'search.html',

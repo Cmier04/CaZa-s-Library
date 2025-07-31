@@ -65,11 +65,9 @@ class Member:
     # Limit of rented books at a time is 2 books
     # Check how many rented books Member has, and if they have 2 books currently, reject their request
     if (len(self.rented) == 2):
-      print("DEBUG: currently rented books =", self.rented)
-      print("DEBUG Count =", len(self.rented))
-      return "Rent book request rejected. Member is currently renting 2 books, which is the limit at one point in time."
+      return "Member is currently renting 2 books."
     elif (rent_status == "closed"):
-      return "Rent book request rejected. Book is currently being rented and unavailable to other Members."
+      return "Book is currently being rented and unavailable to other Members."
     else:
       books_load = load_books()
       copy_load = books_load

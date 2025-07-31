@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleSwitch = document.getElementById('toggle-members-switch');
     const membersList = document.getElementById('members-list');
     const editMembersBtn = document.getElementById('edit-members-btn');
-    const closeBtn = document.querySelectorAll('.flash-close');
+    const closeBtn = document.querySelectorAll('.close-btn');
     const loginRedirect = document.getElementById('redirect-to-login');
     const homeRedirect = document.getElementById('redirect-to-homepage');
     const sortSelect = document.querySelector('select[name="sort-by"]');
@@ -63,21 +63,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     //Dismiss flash messages using close button
-    if (closeBtn) {
+    setTimeout(() => {
         closeBtn.forEach(button => {
-            button.addEventListener('click', function () {
-                this.parentElement.style.display = 'none';
+            button.addEventListener('click', () => {
+                const flash = button.closest('.flash-message');
+                if (flash) flash.remove();                
             });
         });
-    }
+    }, 3000);
+    
 
     //Auto-dismiss messages after 5 seconds
     setTimeout(() => {
-        const flash = document.querySelector('.flash-message');
-        if (flash) {
-            flash.style.display = 'none';
-        }
-    }, 5000);
+        const flash = document.querySelectorAll('.flash-container');
+        flash.forEach(flash => {
+            flash.remove()
+        });
+    }, 3000);
 
     //redirect users to login page if user already exists
     if (loginRedirect) {

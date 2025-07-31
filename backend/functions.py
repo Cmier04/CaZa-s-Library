@@ -31,7 +31,7 @@ def load_books():
 
 def save_books(book_data):
     with open(book_file, 'w') as f:
-        json.dump(book_data, f, indent=4)
+        json.dump(book_data, f, indent=4, ensure_ascii=False)
 
 def load_staff():
     #loads staff from staff.json
