@@ -3,34 +3,56 @@
 
 {% block content %}
 <div class="booklist-container">
-  <h1>Book Listings (Staff View)</h1>
+  <h1>{{ book.title }}</h1>
+  <p><strong>Author: </strong>{{ book.author }}</p>
+  <p><strong>ISBN: </strong>{{ book.isbn }}</p>
+  <p><strong>Genre: </strong>{{ book.genre }}</p>
+  <p><strong>Description: </strong>{{ book.description }}</p>
+  <p><strong>Status: </strong>{{ book.rent_status|capitalize }}</p>
 
-  <table class="book-table" id="bookTable">
-    <thead>
-      <tr>
-        <th>Title</th>
-        <th>Author</th>
-        <th>ISBN</th>
-        <th>Rental Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td colspan="5" class="no-books">No books listed yet. Use the form below to add one.</td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Edit Button -->
+  <form method="POST">
+     <input type="hidden" name="action" value="edit_book">
+     <label>Update Title: <input type="text" name="title" value="{{ book.title }}"></label><br>
+     <label>Update Author: <input type="text" name="author" value="{{ book.author }}"></label><br>
+     <label>Update Genre: <input type="text" name="genre" value="{{ book.genre }}"></label><br>
+     <label>Update Description> <input type="text" name="description" value="{{ book.description }}"></label><br>
+     <button type="submit">Update Book Information</button>
+  </form>
 
-  <div class="add-form">
-    <h3>Add a New Book</h3>
-    <form>
-      <input type="text" placeholder="Title" required>
-      <input type="text" placeholder="Author" required>
-      <input type="text" placeholder="ISBN" required>
-      <input type="text" placeholder="Status" required>
-      <button type="submit">Add Book</button>
-    </form>
-  </div>
-</div>
+  <!-- Edit Due Date -->
+   {% if checked_out_books %}
+    {% for entry in checked_out_books %}
+      <div class="rental-entry">
+        <p><strong>Checked out by: </strong>{{entry.username }} (ID: {{ entry.member_id }})</p>
+        <p><strong>Current Due Date: </strong>{{ entry.due_date }}</p>
+        <p>
+          <strong>Status: </strong>
+          {% if entry.overdue %}
+            <span style="color: red;">Overdue</span>
+          {% else %}
+            On time
+          {% endif %}
+        </p>
+
+        <!-- Shows if rented -->
+         <form method="POST">
+          <input type="hidden" name="action" value="update_due_date">
+          <input type="hidden" name="member_id" value="{{ entry.member_id }}">
+          <input type="hidden" name="isbn" value="{{ book.isbn }}">
+          <label>New Due Date:
+            <input type="date" name="new_due_date" value="{{ entry.due_date }}">
+          </label>
+          <button type="submit">Update Date</button>
+         </form>
+        <hr>
+      </div>
+    {% endfor %}
+  {% else %}
+  <!-- Delete Listing -->
+   <form method="POST" id="delete-book-form">
+    <input type="hidden" name="action" value="delete_book">
+    <button type="submit" id="delete-button">Delete Book</button>
+   </form>
+  {% endif %}
 {% endblock %}

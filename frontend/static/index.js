@@ -17,6 +17,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const homeRedirect = document.getElementById('redirect-to-homepage');
     const sortSelect = document.querySelector('select[name="sort-by"]');
     const searchForm = document.querySelector('form')
+    const deleteBtn = document.querySelectorAll('.delete-button');
+
+    //Staff listing page - Delete Listing
+    deleteBtn.forEach(button => {
+        button.addEventListener("click", function(event) {
+            const confirmed = confirm("Are you sure you want to delete this book?");
+            if (!confirmed) {
+                event.preventDefault();
+            }
+        });
+    });
 
     //Search Page buttons
     if (sortSelect && searchForm) {

@@ -25,12 +25,16 @@
     {% if books %}
       {% for book in books %}
       <div class="book">
-        <a href="{{ url_for('frontend.listing_member', isbn=book.isbn) }}">
-          <h3>{{ book.title }}</h3>
-          <p><strong>Author:</strong> {{ book.author }}</p>
-          <p><strong>ISBN:</strong> {{ book.isbn }}</p>
-          <p><strong>Status:</strong> {{book.rent_status|capitalize }}</p>
-        </a>
+        {% if users_type == 'member' %}
+          <a href="{{ url_for('frontend.listing_member', isbn=book.isbn) }}">
+        {% else %}
+          <a href="{{ url_for('frontend.listing_staff', isbn=book.isbn) }}">
+        {% endif %}
+            <h3>{{ book.title }}</h3>
+            <p><strong>Author:</strong> {{ book.author }}</p>
+            <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+            <p><strong>Status:</strong> {{book.rent_status|capitalize }}</p>
+          </a>
       </div>
       {% endfor %}
     {% else %}
