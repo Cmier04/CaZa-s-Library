@@ -15,30 +15,13 @@
             ],
             "rented": {}
         },
-        {
-            "name": "Squirrel",
-            "member_id": "4406",
-            "email": "christine.n.mier@gmail.com",
-            "favorites": [],
-            "rented": {}
-        },
-        {
-            "name": "dsa",
-            "member_id": "7628",
-            "email": "christine.n.mier@gmail.com",
-            "favorites": [],
-            "rented": {}
-        },
-        {
-            "name": "fsdf",
-            "member_id": "1724",
-            "email": "christine.n.mier@gmail.com",
-            "favorites": [],
-            "rented": {}
-        }
     ],
     "unused_ids": [
         "9242",
-        "3861"
+        "3861",
+        "5529",
+        "8493"
+        "7826",
+        "4567"
     ]
 }
