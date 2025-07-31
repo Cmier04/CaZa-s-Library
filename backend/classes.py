@@ -3,15 +3,6 @@
 # Project Name: CaZa's Library
 # File Purpose: Define and implement classes used in driver program
 
-#--------------------------List of TODO's-------------------------------
-  # TODO: complete definition of Member class and check if "user" class is necessary to handle guest interaction
-  # TODO: complete definition of Staff class; make any changes necessary
-  # TODO: define functions for member class
-  # TODO: revise and edit docstrings to accurately describe classes
-
-#--------------------------Changes Made---------------------------------
- # Comment changes made to this file here, keeps track of changes if commit contains multiple files.
-  #..
 from backend.functions import *
 
 from datetime import datetime, date, timedelta

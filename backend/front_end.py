@@ -3,22 +3,6 @@
 # Project Name: CaZa's Library
 # File Purpose: This file helps connecting the different pages together through routing.
 
-# --------------------------List of TODO's-------------------------------
-  # TODO: implement signup(): prompts user for username and email then redirects to home page
-  # TODO: implement login(): prompts the user for username and member_id or staff_id, redirects to home page (for staff, to their account to check library)
-  # TODO: implement member_application(): holds user information which is given when the user creates a new account, for staff they can check overdue status and modify user accounts/books
-  # TODO: implement logout(): logs users out of their accounts and redirects them to the home page under guest view
-  # TODO: implement home_members(): home page for members which allows them to log out from the nav bar (call log out f)
-  # TODO: test and ensure all routes lead to a defined page
-
-# --------------------------Changes Made---------------------------------
-    # Comment changes made to this file here, keeps track of changes if commit contains multiple files.'
-    # Added different page routes and specified todo's
-
-# ------------------------NOTE-----------------------
-    # if the way this was implemented does not work, look into manually writing out the routes between pages
-    # make sure to use render_template in order to load the HTML file 
-
 import sys
 import os
 from flask import Blueprint, render_template, request, redirect, session, flash, url_for, jsonify
@@ -227,12 +211,19 @@ def member_profile():
 
     all_books = load_books()
     checked_out_books = []
-
+    today = datetime.today().date()
     for isbn, due_date in member.rented.items():
         book = next((b for b in all_books if b['isbn'] == isbn), None)
         if book:
             book_copy = book.copy()
+            try:
+                due_date = datetime.fromisoformat(due_date).date()
+            except ValueError:
+                due_date = None
             book_copy['due_date'] = due_date
+            book_copy['overdue_status'] = (
+                'overdue' if due_date and due_date < today else 'on time'
+            )
             checked_out_books.append(book_copy)
 
     overdue_books = manager.getOverdueBooks(member)
@@ -293,12 +284,26 @@ def staff_profile():
                 flash("Error updating profile", 'error')
         return redirect(url_for('frontend.staff_profile'))
 
+    books_data = load_books()
     members_list = load_users().get('users', [])
     overdue_books = []
+    today = datetime.today().date()
     for user in members_list:
+        rented_books = user.get('rented', {})
+        for isbn, due_str in rented_books.items():
+            try:
+                due_date = datetime.fromisoformat(due_str).date()
+            except ValueError:
+                continue
+            if due_date < today:
+                book = next((b for b in books_data if b['isbn'] == isbn), None)
+                if book:
+                    overdue_books.append({
+                        'title': book['title'],
+                        'due_date': due_date.isoformat()
+                    })
         member = Member(user['name'], user['member_id'], user['email'])
         member.rented = user.get('rented', {})
-        overdue_books.extend(manager.getOverdueBooks(member))
 
     return render_template(
         'staff_profile.html',
@@ -419,27 +424,9 @@ def listing_staff():
     book = next((b for b in books if b['isbn'] == isbn), None)
     if not book:
         flash("Book not found.", "error")
+        return redirect(url_for('frontend.login', "error"))
 
-    #loading members checkout out book info
-    checked_out_books = []
-    members_list = load_users().get('users', [])
-    today = datetime.today().date()
-
-    for user_data in members_list:
-        member = Member(user_data['name'], user_data['member_id'], user_data['email'])
-        if isbn in member.rented:
-            due_str = member.rented[isbn]
-            try:
-                due_date - datetime.fromisoformat(due_str).date()
-            except ValueError:
-                due_date = None
-            is_overdue = due_date and due_date < today
-            checked_out_books.append({
-                'username': member.name,
-                'member_id': member.member_id,
-                'due_date': due_date,
-                'overdue': is_overdue
-            })
+    
     
     if request.method == 'POST':
         action = request.form.get('action')
@@ -452,19 +439,22 @@ def listing_staff():
             flash("Book information updated successfully.", "success")
         elif action == 'update_due_date':
             member_id = request.form.get('member_id')
-            new_due_date = request.form.get('new_due_date')
+            new_due_date_str = request.form.get('new_due_date')
             try:
-                new_due_date = datetime.fromisoformat(new_date_str).date()
+                new_due_date = datetime.fromisoformat(new_due_date_str).date()
             except ValueError:
                 flash("Invalid date format.", "error")
                 return redirect(url_for('frontend.listing_staff', isbn=isbn))
-            members_list = load_users.get('users', [])
-            for user_data in members_data:
+            members_list = load_users().get('users', [])
+            for user_data in members_list:
                 if user_data['member_id'] == member_id:
-                    member = Member(user_data['name'], user_data['member_id'], user_data['email'])
+                    member = Member(user_data['name'], user_data['member_id'], user_data['email'], rented=user_data.get('rented', {}))
+                    print("Before update:", member.rented)
                     if isbn in member.rented:
                         member.rented[isbn] = new_due_date.isoformat()
-                        save_users({'users': members_data})
+                        user_data['rented'] = member.rented
+                        print("After update:", member.rented)
+                        save_users({'users': members_list})
                         flash("Due date updated successfully.", "success")
                         break
         elif action =='delete_book':
@@ -474,6 +464,27 @@ def listing_staff():
             return redirect(url_for('frontend.search'))
         else:
             return redirect(url_for('frontend.listing_staff', isbn=isbn))
+#loading members checkout out book info
+    checked_out_books = []
+    members_list = load_users().get('users', [])
+    today = datetime.today().date()
+
+    for user_data in members_list:
+        member = Member(user_data['name'], user_data['member_id'], user_data['email'])
+        member.rented = user_data.get('rented', {})
+        if isbn in member.rented:
+            due_str = member.rented[isbn]
+            try:
+                due_date = datetime.fromisoformat(due_str).date()
+            except ValueError:
+                due_date = None
+            is_overdue = due_date and due_date < today
+            checked_out_books.append({
+                'username': member._name,
+                'member_id': member._member_id,
+                'due_date': due_date,
+                'overdue': is_overdue
+            })
 
     return render_template(
         'listing_staff.html',
