@@ -9,6 +9,6 @@ Team members: Christine Mier, Alexia Macias, Allen Le, Zhi Xuan Chong
 
 1. git clone repository
 
-2. Install a virtual environment and activate it in the repository
+2. Install a virtual environment and activate it in the repository (.venv and venv are currently in .gitignore, so it is reccommended to name the file according to this)
 
 3. Install .env and store SECRET_KEY (code will not run properly without **)
